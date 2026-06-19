@@ -468,15 +468,15 @@
         }
 
         manager = mgr;
-        document.getElementById('loginScreen').classList.add('hidden');
-        document.getElementById('dashboardScreen').classList.remove('hidden');
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('dashboardScreen').style.display = 'block';
         updateUI();
     }
 
     function loginGuest() {
         manager = 'guest';
-        document.getElementById('loginScreen').classList.add('hidden');
-        document.getElementById('dashboardScreen').classList.remove('hidden');
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('dashboardScreen').style.display = 'block';
         updateUI();
     }
 
@@ -484,8 +484,8 @@
         manager = null;
         document.getElementById('managerSelect').value = '';
         document.getElementById('passwordInput').value = '';
-        document.getElementById('loginScreen').classList.remove('hidden');
-        document.getElementById('dashboardScreen').classList.add('hidden');
+        document.getElementById('loginScreen').style.display = 'flex';
+        document.getElementById('dashboardScreen').style.display = 'none';
     }
 
     function showTab(name) {
