@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MDF & PVC</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 
@@ -18,7 +19,6 @@
             --gray-lighter: #ededed;
             --bg: #f5f5f4;
             --white: #ffffff;
-            --accent: #1a1a1a;
         }
 
         body {
@@ -30,7 +30,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* ===== LOGIN ===== */
         .login-screen {
             min-height: 100vh;
             display: flex;
@@ -65,9 +64,7 @@
             margin-bottom: 48px;
         }
 
-        .field {
-            margin-bottom: 24px;
-        }
+        .field { margin-bottom: 24px; }
 
         .field label {
             display: block;
@@ -118,23 +115,8 @@
             margin-top: 16px;
         }
 
-        .btn-dark:hover {
-            background: var(--anthracite);
-        }
+        .btn-dark:hover { background: var(--anthracite); }
 
-        .btn-ghost {
-            background: transparent;
-            color: var(--gray-dark);
-            border: 1px solid var(--gray-light);
-            margin-top: 10px;
-        }
-
-        .btn-ghost:hover {
-            border-color: var(--black);
-            color: var(--black);
-        }
-
-        /* ===== APP ===== */
         .app { display: none; min-height: 100vh; }
 
         .topbar {
@@ -154,11 +136,7 @@
             text-transform: uppercase;
         }
 
-        .topbar-right {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
+        .topbar-right { display: flex; gap: 8px; align-items: center; }
 
         .top-btn {
             background: transparent;
@@ -174,10 +152,7 @@
             transition: all 0.3s;
         }
 
-        .top-btn:hover {
-            border-color: var(--black);
-            color: var(--black);
-        }
+        .top-btn:hover { border-color: var(--black); color: var(--black); }
 
         .user-tag {
             font-size: 10px;
@@ -213,17 +188,9 @@
         }
 
         .nav-item:hover { color: var(--black); }
+        .nav-item.active { color: var(--black); border-bottom-color: var(--black); }
 
-        .nav-item.active {
-            color: var(--black);
-            border-bottom-color: var(--black);
-        }
-
-        .main {
-            padding: 56px 40px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
+        .main { padding: 56px 40px; max-width: 1400px; margin: 0 auto; }
 
         .section { display: none; }
         .section.active { display: block; }
@@ -243,7 +210,6 @@
             margin-bottom: 48px;
         }
 
-        /* STATS */
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -253,10 +219,7 @@
             margin-bottom: 56px;
         }
 
-        .stat {
-            background: var(--white);
-            padding: 32px;
-        }
+        .stat { background: var(--white); padding: 32px; }
 
         .stat-label {
             font-size: 10px;
@@ -266,13 +229,8 @@
             margin-bottom: 16px;
         }
 
-        .stat-value {
-            font-size: 36px;
-            font-weight: 300;
-            letter-spacing: -0.5px;
-        }
+        .stat-value { font-size: 36px; font-weight: 300; letter-spacing: -0.5px; }
 
-        /* SECTION HEADER */
         .block-title {
             font-size: 11px;
             letter-spacing: 2px;
@@ -282,17 +240,13 @@
             font-weight: 600;
         }
 
-        /* TABLE */
         .table-wrap {
             border: 1px solid var(--gray-lighter);
             background: var(--white);
             overflow-x: auto;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+        table { width: 100%; border-collapse: collapse; }
 
         th {
             text-align: left;
@@ -303,6 +257,7 @@
             color: var(--gray);
             font-weight: 500;
             border-bottom: 1px solid var(--gray-lighter);
+            white-space: nowrap;
         }
 
         td {
@@ -323,7 +278,6 @@
             padding: 48px 20px !important;
         }
 
-        /* FORM */
         .form-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -333,7 +287,6 @@
         }
 
         .form-grid.single { grid-template-columns: 1fr; max-width: 440px; }
-
         .form-block { margin-bottom: 40px; }
 
         .btn-save {
@@ -351,13 +304,22 @@
         }
 
         .btn-save:hover { background: var(--anthracite); }
+        .btn-save:disabled { background: var(--gray-light); cursor: not-allowed; }
 
-        .divider {
-            height: 1px;
-            background: var(--gray-lighter);
-            margin: 40px 0;
-            max-width: 900px;
+        .divider { height: 1px; background: var(--gray-lighter); margin: 40px 0; max-width: 900px; }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            font-size: 9px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border: 1px solid var(--gray-light);
+            color: var(--gray-dark);
         }
+
+        .badge.paid { border-color: var(--black); color: var(--black); }
+        .badge.debt { border-color: #b91c1c; color: #b91c1c; }
 
         .hidden { display: none !important; }
 
@@ -389,11 +351,10 @@
 
         <div class="field">
             <label id="lblPassword">Құпия сөз</label>
-            <input type="password" id="passwordInput" placeholder="••••••••">
+            <input type="password" id="passwordInput" placeholder="••••••••" onkeypress="if(event.key==='Enter')login()">
         </div>
 
         <button class="btn btn-dark" onclick="login()" id="btnLogin">Кіру</button>
-        <button class="btn btn-ghost" onclick="loginGuest()" id="btnGuest">Қонақ</button>
     </div>
 </div>
 
@@ -424,16 +385,16 @@
 
             <div class="stats">
                 <div class="stat">
-                    <div class="stat-label" id="statOrders">Бүгінгі тапсырыстар</div>
-                    <div class="stat-value">0</div>
+                    <div class="stat-label" id="statOrders">Барлық тапсырыстар</div>
+                    <div class="stat-value" id="valOrders">0</div>
                 </div>
                 <div class="stat">
                     <div class="stat-label" id="statDebt">Жалпы берешек</div>
-                    <div class="stat-value">₸0</div>
+                    <div class="stat-value" id="valDebt">₸0</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-label" id="statExpense">Бүгінгі шығындар</div>
-                    <div class="stat-value">₸0</div>
+                    <div class="stat-label" id="statExpense">Жалпы шығындар</div>
+                    <div class="stat-value" id="valExpense">₸0</div>
                 </div>
             </div>
 
@@ -442,15 +403,15 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>№</th>
                             <th id="th1">Клиент</th>
                             <th id="th2">Түрі</th>
                             <th id="th3">Сома</th>
                             <th id="th4">Төленді</th>
                             <th id="th5">Берешек</th>
+                            <th id="th6">Менеджер</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="recentBody">
                         <tr><td colspan="6" class="empty" id="empty1">Тапсырыс жоқ</td></tr>
                     </tbody>
                 </table>
@@ -462,6 +423,24 @@
             <h1 class="page-title" id="newTitle">Жаңа тапсырыс</h1>
             <div class="page-eyebrow" id="newEyebrow">Тапсырыс құру</div>
 
+            <div class="block-title" id="custBlock">Клиент</div>
+            <div class="form-grid">
+                <div class="field">
+                    <label id="lblFirstName">Аты</label>
+                    <input type="text" id="firstName">
+                </div>
+                <div class="field">
+                    <label id="lblLastName">Тегі</label>
+                    <input type="text" id="lastName">
+                </div>
+                <div class="field">
+                    <label id="lblPhone">Телефон</label>
+                    <input type="tel" id="custPhone" value="+7 " placeholder="+7 700 000 00 00" oninput="formatPhone(this)" onfocus="if(!this.value)this.value='+7 '">
+                </div>
+            </div>
+
+            <div class="divider"></div>
+            <div class="block-title" id="typeBlock">Тапсырыс түрі</div>
             <div class="form-grid single">
                 <div class="field">
                     <label id="lblType">Түрі</label>
@@ -471,14 +450,9 @@
                         <option value="pvc">PVC Қаптау</option>
                     </select>
                 </div>
-                <div class="field">
-                    <label id="lblPhone">Клиент телефоны</label>
-                    <input type="text" id="custPhone" placeholder="+7 700 000 00 00">
-                </div>
             </div>
 
             <div id="mdfForm" class="hidden">
-                <div class="divider"></div>
                 <div class="block-title" id="mdfBlock">MDF деректемелері</div>
                 <div class="form-grid">
                     <div class="field">
@@ -497,7 +471,6 @@
             </div>
 
             <div id="pvcForm" class="hidden">
-                <div class="divider"></div>
                 <div class="block-title" id="pvcBlock">PVC деректемелері</div>
                 <div class="form-grid">
                     <div class="field">
@@ -520,7 +493,7 @@
             <div class="form-grid">
                 <div class="field">
                     <label id="lblPrice">Жалпы баға (₸)</label>
-                    <input type="number" id="price" step="100">
+                    <input type="number" id="price" step="100" oninput="calcRemaining()">
                 </div>
                 <div class="field">
                     <label id="lblPayment">Төлем әдісі</label>
@@ -533,11 +506,15 @@
                 </div>
                 <div class="field">
                     <label id="lblPaid">Төленген (₸)</label>
-                    <input type="number" id="paid" step="100">
+                    <input type="number" id="paid" step="100" oninput="calcRemaining()">
+                </div>
+                <div class="field">
+                    <label id="lblRemaining">Қалған берешек (₸)</label>
+                    <input type="number" id="remaining" readonly style="color: var(--gray);">
                 </div>
             </div>
 
-            <button class="btn-save" onclick="alert('Сақталды')" id="btnSaveOrder">Сақтау</button>
+            <button class="btn-save" onclick="saveOrder()" id="btnSaveOrder">Сақтау</button>
         </div>
 
         <!-- ORDERS -->
@@ -548,16 +525,16 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>№</th>
                             <th id="o1">Клиент</th>
                             <th id="o2">Түрі</th>
                             <th id="o3">Күні</th>
                             <th id="o4">Барлығы</th>
                             <th id="o5">Төленді</th>
                             <th id="o6">Берешек</th>
+                            <th id="o7">Менеджер</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="ordersBody">
                         <tr><td colspan="7" class="empty" id="empty2">Тапсырыс жоқ</td></tr>
                     </tbody>
                 </table>
@@ -572,12 +549,13 @@
                 <table>
                     <thead>
                         <tr>
-                            <th id="c1">Телефон</th>
-                            <th id="c2">Берешек</th>
+                            <th id="c1">Аты-жөні</th>
+                            <th id="c2">Телефон</th>
+                            <th id="c3">Берешек</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr><td colspan="2" class="empty" id="empty3">Берешек жоқ</td></tr>
+                    <tbody id="custBody">
+                        <tr><td colspan="3" class="empty" id="empty3">Берешек жоқ</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -612,7 +590,7 @@
                 </div>
             </div>
 
-            <button class="btn-save" onclick="alert('Сақталды')" id="btnSaveExp">Сақтау</button>
+            <button class="btn-save" onclick="saveExpense()" id="btnSaveExp">Сақтау</button>
 
             <div class="divider"></div>
             <div class="block-title" id="expListTitle">Шығындар тізімі</div>
@@ -624,10 +602,11 @@
                             <th id="e2">Түрі</th>
                             <th id="e3">Сома</th>
                             <th id="e4">Сипаттама</th>
+                            <th id="e5">Менеджер</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr><td colspan="4" class="empty" id="empty4">Шығын жоқ</td></tr>
+                    <tbody id="expBody">
+                        <tr><td colspan="5" class="empty" id="empty4">Шығын жоқ</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -636,51 +615,64 @@
 </div>
 
 <script>
+    const SUPABASE_URL = 'https://pegvsgxygqlstdaxlyas.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_Ri7s814pMGV9JyojJsSN3Q_7piklNPF';
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
     let lang = 'kz';
     let manager = null;
+
+    const expNames = {
+        kz: {paint:'Бояу',mdf:'MDF',sand:'Құм қағазы',thin:'Ерітіндісі',pvc:'PVC',glue:'Желім',salary:'Жалақы',other:'Басқа'},
+        ru: {paint:'Краска',mdf:'MDF',sand:'Наждачка',thin:'Растворитель',pvc:'PVC',glue:'Клей',salary:'Зарплата',other:'Прочее'}
+    };
 
     const T = {
         ru: {
             loginSub: 'Управление складом', lblManager: 'Менеджер', lblPassword: 'Пароль',
-            btnLogin: 'Войти', btnGuest: 'Гость', btnLogout: 'Выйти',
+            btnLogin: 'Войти', btnLogout: 'Выйти',
             navDash: 'Панель', navNew: 'Новый заказ', navOrders: 'Заказы', navCustomers: 'Должники', navExpenses: 'Расходы',
             dashTitle: 'Панель управления', dashEyebrow: 'Общий обзор',
-            statOrders: 'Заказы сегодня', statDebt: 'Общий долг', statExpense: 'Расходы сегодня',
+            statOrders: 'Всего заказов', statDebt: 'Общий долг', statExpense: 'Всего расходов',
             recentTitle: 'Последние заказы',
-            th1:'Клиент', th2:'Тип', th3:'Сумма', th4:'Оплачено', th5:'Долг', empty1:'Нет заказов',
-            newTitle:'Новый заказ', newEyebrow:'Создание заказа', lblType:'Тип', lblPhone:'Телефон клиента',
+            th1:'Клиент', th2:'Тип', th3:'Сумма', th4:'Оплачено', th5:'Долг', th6:'Менеджер', empty1:'Нет заказов',
+            newTitle:'Новый заказ', newEyebrow:'Создание заказа',
+            custBlock:'Клиент', lblFirstName:'Имя', lblLastName:'Фамилия', lblPhone:'Телефон',
+            typeBlock:'Тип заказа', lblType:'Тип',
             mdfBlock:'Данные MDF', lblMdfSqm:'Кв. метр (м²)', lblMdfThick:'Толщина (мм)', lblColor:'Цвет краски',
             pvcBlock:'Данные PVC', lblPvcSqm:'Кв. метр (м²)', lblPvcThick:'Толщина MDF (мм)', lblQuantity:'Кол-во захватов',
-            payBlock:'Оплата', lblPrice:'Общая цена (₸)', lblPayment:'Способ оплаты', lblPaid:'Оплачено (₸)',
+            payBlock:'Оплата', lblPrice:'Общая цена (₸)', lblPayment:'Способ оплаты', lblPaid:'Оплачено (₸)', lblRemaining:'Остаток долга (₸)',
             payCash:'Наличные', payCard:'Карта', pay50:'50% / 50%', payCredit:'В кредит', btnSaveOrder:'Сохранить',
             ordersTitle:'Заказы', ordersEyebrow:'Все заказы',
-            o1:'Клиент', o2:'Тип', o3:'Дата', o4:'Итого', o5:'Оплачено', o6:'Долг', empty2:'Нет заказов',
-            custTitle:'Должники', custEyebrow:'Клиенты с долгом', c1:'Телефон', c2:'Долг', empty3:'Нет должников',
+            o1:'Клиент', o2:'Тип', o3:'Дата', o4:'Итого', o5:'Оплачено', o6:'Долг', o7:'Менеджер', empty2:'Нет заказов',
+            custTitle:'Должники', custEyebrow:'Клиенты с долгом', c1:'ФИО', c2:'Телефон', c3:'Долг', empty3:'Нет должников',
             expTitle:'Расходы', expEyebrow:'Учёт расходов', lblExpType:'Тип', lblExpAmount:'Сумма (₸)', lblExpDesc:'Описание',
             et1:'Краска', et2:'MDF', et3:'Наждачка', et4:'Растворитель', et5:'PVC', et6:'Клей', et7:'Зарплата', et8:'Прочее',
             btnSaveExp:'Сохранить', expListTitle:'Список расходов',
-            e1:'Дата', e2:'Тип', e3:'Сумма', e4:'Описание', empty4:'Нет расходов'
+            e1:'Дата', e2:'Тип', e3:'Сумма', e4:'Описание', e5:'Менеджер', empty4:'Нет расходов'
         },
         kz: {
             loginSub: 'Қойма басқару', lblManager: 'Менеджер', lblPassword: 'Құпия сөз',
-            btnLogin: 'Кіру', btnGuest: 'Қонақ', btnLogout: 'Шығу',
+            btnLogin: 'Кіру', btnLogout: 'Шығу',
             navDash: 'Панель', navNew: 'Жаңа тапсырыс', navOrders: 'Тапсырыстар', navCustomers: 'Берешеклі', navExpenses: 'Шығындар',
             dashTitle: 'Басқару панелі', dashEyebrow: 'Жалпы шолу',
-            statOrders: 'Бүгінгі тапсырыстар', statDebt: 'Жалпы берешек', statExpense: 'Бүгінгі шығындар',
+            statOrders: 'Барлық тапсырыстар', statDebt: 'Жалпы берешек', statExpense: 'Жалпы шығындар',
             recentTitle: 'Соңғы тапсырыстар',
-            th1:'Клиент', th2:'Түрі', th3:'Сома', th4:'Төленді', th5:'Берешек', empty1:'Тапсырыс жоқ',
-            newTitle:'Жаңа тапсырыс', newEyebrow:'Тапсырыс құру', lblType:'Түрі', lblPhone:'Клиент телефоны',
+            th1:'Клиент', th2:'Түрі', th3:'Сома', th4:'Төленді', th5:'Берешек', th6:'Менеджер', empty1:'Тапсырыс жоқ',
+            newTitle:'Жаңа тапсырыс', newEyebrow:'Тапсырыс құру',
+            custBlock:'Клиент', lblFirstName:'Аты', lblLastName:'Тегі', lblPhone:'Телефон',
+            typeBlock:'Тапсырыс түрі', lblType:'Түрі',
             mdfBlock:'MDF деректемелері', lblMdfSqm:'Шаршы метр (м²)', lblMdfThick:'Қалыңдық (мм)', lblColor:'Бояу түсі',
             pvcBlock:'PVC деректемелері', lblPvcSqm:'Шаршы метр (м²)', lblPvcThick:'MDF қалыңдық (мм)', lblQuantity:'Захват саны',
-            payBlock:'Төлем', lblPrice:'Жалпы баға (₸)', lblPayment:'Төлем әдісі', lblPaid:'Төленген (₸)',
+            payBlock:'Төлем', lblPrice:'Жалпы баға (₸)', lblPayment:'Төлем әдісі', lblPaid:'Төленген (₸)', lblRemaining:'Қалған берешек (₸)',
             payCash:'Ақша', payCard:'Карта', pay50:'50% / 50%', payCredit:'Бөлінбе', btnSaveOrder:'Сақтау',
             ordersTitle:'Тапсырыстар', ordersEyebrow:'Барлық тапсырыстар',
-            o1:'Клиент', o2:'Түрі', o3:'Күні', o4:'Барлығы', o5:'Төленді', o6:'Берешек', empty2:'Тапсырыс жоқ',
-            custTitle:'Берешеклі', custEyebrow:'Қарызы бар клиенттер', c1:'Телефон', c2:'Берешек', empty3:'Берешек жоқ',
+            o1:'Клиент', o2:'Түрі', o3:'Күні', o4:'Барлығы', o5:'Төленді', o6:'Берешек', o7:'Менеджер', empty2:'Тапсырыс жоқ',
+            custTitle:'Берешеклі', custEyebrow:'Қарызы бар клиенттер', c1:'Аты-жөні', c2:'Телефон', c3:'Берешек', empty3:'Берешек жоқ',
             expTitle:'Шығындар', expEyebrow:'Шығын тіркеу', lblExpType:'Түрі', lblExpAmount:'Сома (₸)', lblExpDesc:'Сипаттама',
             et1:'Бояу', et2:'MDF', et3:'Құм қағазы', et4:'Ерітіндісі', et5:'PVC', et6:'Желім', et7:'Жалақы', et8:'Басқа',
             btnSaveExp:'Сақтау', expListTitle:'Шығындар тізімі',
-            e1:'Күні', e2:'Түрі', e3:'Сома', e4:'Сипаттама', empty4:'Шығын жоқ'
+            e1:'Күні', e2:'Түрі', e3:'Сома', e4:'Сипаттама', e5:'Менеджер', empty4:'Шығын жоқ'
         }
     };
 
@@ -697,6 +689,10 @@
         updateUI();
     }
 
+    function money(n) {
+        return '₸' + Number(n || 0).toLocaleString('ru-RU');
+    }
+
     function login() {
         const mgr = document.getElementById('managerSelect').value;
         const pwd = document.getElementById('passwordInput').value;
@@ -707,14 +703,7 @@
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('app').style.display = 'block';
         updateUI();
-    }
-
-    function loginGuest() {
-        manager = 'guest';
-        document.getElementById('userTag').textContent = lang==='ru'?'Гость':'Қонақ';
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('app').style.display = 'block';
-        updateUI();
+        loadDashboard();
     }
 
     function logout() {
@@ -730,12 +719,223 @@
         document.getElementById(name).classList.add('active');
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         el.classList.add('active');
+        if (name === 'dashboard') loadDashboard();
+        if (name === 'orders') loadOrders();
+        if (name === 'customers') loadCustomers();
+        if (name === 'expenses') loadExpenses();
     }
 
     function switchType() {
         const type = document.getElementById('orderType').value;
         document.getElementById('mdfForm').classList.toggle('hidden', type !== 'mdf');
         document.getElementById('pvcForm').classList.toggle('hidden', type !== 'pvc');
+    }
+
+    function calcRemaining() {
+        const price = parseFloat(document.getElementById('price').value) || 0;
+        const paid = parseFloat(document.getElementById('paid').value) || 0;
+        document.getElementById('remaining').value = price - paid;
+    }
+
+    function formatPhone(input) {
+        let digits = input.value.replace(/\D/g, '');
+        if (digits.startsWith('8')) digits = '7' + digits.slice(1);
+        if (!digits.startsWith('7')) digits = '7' + digits;
+        digits = digits.slice(0, 11);
+        let out = '+7';
+        if (digits.length > 1) out += ' ' + digits.slice(1, 4);
+        if (digits.length >= 5) out += ' ' + digits.slice(4, 7);
+        if (digits.length >= 8) out += ' ' + digits.slice(7, 9);
+        if (digits.length >= 10) out += ' ' + digits.slice(9, 11);
+        input.value = out;
+    }
+
+    async function saveOrder() {
+        const type = document.getElementById('orderType').value;
+        const fname = document.getElementById('firstName').value.trim();
+        const lname = document.getElementById('lastName').value.trim();
+        const phone = document.getElementById('custPhone').value.trim();
+        const price = parseFloat(document.getElementById('price').value);
+        const paid = parseFloat(document.getElementById('paid').value) || 0;
+
+        const phoneDigits = phone.replace(/\D/g, '');
+        if (!fname || phoneDigits.length < 11 || !type || !price) {
+            alert(lang==='ru'?'Заполните: имя, телефон, тип, цену':'Толтырыңыз: аты, телефон, түрі, баға');
+            return;
+        }
+
+        const btn = document.getElementById('btnSaveOrder');
+        btn.disabled = true;
+        const debt = price - paid;
+        const fullName = (fname + ' ' + lname).trim();
+
+        const order = {
+            customer_phone: phone,
+            customer_name: fullName,
+            order_type: type === 'mdf' ? 'mdf_boya' : 'pvc_kaplama',
+            admin_accepted: manager,
+            total_price: price,
+            paid_amount: paid,
+            remaining_balance: debt,
+            payment_method: document.getElementById('payment').value,
+            status: 'pending'
+        };
+
+        if (type === 'mdf') {
+            order.mdf_sqm = parseFloat(document.getElementById('mdfSqm').value) || null;
+            order.mdf_thickness = parseInt(document.getElementById('mdfThick').value) || null;
+            order.paint_color = document.getElementById('color').value || null;
+        } else {
+            order.pvc_sqm = parseFloat(document.getElementById('pvcSqm').value) || null;
+            order.mdf_thickness_pvc = parseInt(document.getElementById('pvcThick').value) || null;
+            order.pvc_quantity = parseInt(document.getElementById('quantity').value) || null;
+        }
+
+        try {
+            const { error: orderErr } = await db.from('orders').insert([order]);
+            if (orderErr) throw orderErr;
+
+            const { data: cust } = await db.from('customers').select('*').eq('phone', phone).maybeSingle();
+            if (cust) {
+                await db.from('customers').update({
+                    total_debt: (cust.total_debt || 0) + debt,
+                    first_name: fname,
+                    last_name: lname
+                }).eq('phone', phone);
+            } else {
+                await db.from('customers').insert([{
+                    phone: phone,
+                    first_name: fname,
+                    last_name: lname,
+                    total_debt: debt
+                }]);
+            }
+
+            alert(lang==='ru'?'Заказ сохранён':'Тапсырыс сақталды');
+            ['firstName','lastName','price','paid','remaining','mdfSqm','mdfThick','color','pvcSqm','pvcThick','quantity'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            document.getElementById('custPhone').value = '+7 ';
+            document.getElementById('orderType').value = '';
+            switchType();
+            loadDashboard();
+        } catch (e) {
+            alert((lang==='ru'?'Ошибка: ':'Қате: ') + e.message);
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    async function saveExpense() {
+        const amount = parseFloat(document.getElementById('expAmount').value);
+        if (!amount) { alert(lang==='ru'?'Введите сумму':'Соманы енгізіңіз'); return; }
+
+        const btn = document.getElementById('btnSaveExp');
+        btn.disabled = true;
+        try {
+            const { error } = await db.from('expenses').insert([{
+                manager_name: manager,
+                expense_type: document.getElementById('expType').value,
+                amount: amount,
+                description: document.getElementById('expDesc').value || null
+            }]);
+            if (error) throw error;
+            alert(lang==='ru'?'Расход сохранён':'Шығын сақталды');
+            document.getElementById('expAmount').value = '';
+            document.getElementById('expDesc').value = '';
+            loadExpenses();
+            loadDashboard();
+        } catch (e) {
+            alert((lang==='ru'?'Ошибка: ':'Қате: ') + e.message);
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    async function loadDashboard() {
+        try {
+            const { data: orders } = await db.from('orders').select('*').order('created_at', { ascending: false });
+            const { data: customers } = await db.from('customers').select('total_debt');
+            const { data: expenses } = await db.from('expenses').select('amount');
+
+            const totalDebt = (customers || []).reduce((s, c) => s + (c.total_debt || 0), 0);
+            const totalExp = (expenses || []).reduce((s, e) => s + (e.amount || 0), 0);
+
+            document.getElementById('valOrders').textContent = (orders || []).length;
+            document.getElementById('valDebt').textContent = money(totalDebt);
+            document.getElementById('valExpense').textContent = money(totalExp);
+
+            const tbody = document.getElementById('recentBody');
+            const recent = (orders || []).slice(0, 5);
+            if (recent.length) {
+                tbody.innerHTML = recent.map(o => `
+                    <tr>
+                        <td>${o.customer_name || o.customer_phone}</td>
+                        <td>${o.order_type === 'mdf_boya' ? 'MDF' : 'PVC'}</td>
+                        <td>${money(o.total_price)}</td>
+                        <td>${money(o.paid_amount)}</td>
+                        <td>${o.remaining_balance > 0 ? '<span class="badge debt">'+money(o.remaining_balance)+'</span>' : '<span class="badge paid">✓</span>'}</td>
+                        <td>${o.admin_accepted}</td>
+                    </tr>`).join('');
+            } else {
+                tbody.innerHTML = `<tr><td colspan="6" class="empty">${T[lang].empty1}</td></tr>`;
+            }
+        } catch (e) { console.error(e); }
+    }
+
+    async function loadOrders() {
+        try {
+            const { data: orders } = await db.from('orders').select('*').order('created_at', { ascending: false });
+            const tbody = document.getElementById('ordersBody');
+            if ((orders || []).length) {
+                tbody.innerHTML = orders.map(o => `
+                    <tr>
+                        <td>${o.customer_name || o.customer_phone}</td>
+                        <td>${o.order_type === 'mdf_boya' ? 'MDF' : 'PVC'}</td>
+                        <td>${new Date(o.created_at).toLocaleDateString('ru-RU')}</td>
+                        <td>${money(o.total_price)}</td>
+                        <td>${money(o.paid_amount)}</td>
+                        <td>${o.remaining_balance > 0 ? '<span class="badge debt">'+money(o.remaining_balance)+'</span>' : '<span class="badge paid">✓</span>'}</td>
+                        <td>${o.admin_accepted}</td>
+                    </tr>`).join('');
+            } else {
+                tbody.innerHTML = `<tr><td colspan="7" class="empty">${T[lang].empty2}</td></tr>`;
+            }
+        } catch (e) { console.error(e); }
+    }
+
+    async function loadCustomers() {
+        try {
+            const { data: customers } = await db.from('customers').select('*').gt('total_debt', 0).order('total_debt', { ascending: false });
+            const tbody = document.getElementById('custBody');
+            if ((customers || []).length) {
+                tbody.innerHTML = customers.map(c => {
+                    const name = ((c.first_name || '') + ' ' + (c.last_name || '')).trim() || '—';
+                    return `<tr><td>${name}</td><td>${c.phone}</td><td><span class="badge debt">${money(c.total_debt)}</span></td></tr>`;
+                }).join('');
+            } else {
+                tbody.innerHTML = `<tr><td colspan="3" class="empty">${T[lang].empty3}</td></tr>`;
+            }
+        } catch (e) { console.error(e); }
+    }
+
+    async function loadExpenses() {
+        try {
+            const { data: expenses } = await db.from('expenses').select('*').order('expense_date', { ascending: false });
+            const tbody = document.getElementById('expBody');
+            if ((expenses || []).length) {
+                tbody.innerHTML = expenses.map(e => `
+                    <tr>
+                        <td>${e.expense_date ? new Date(e.expense_date).toLocaleDateString('ru-RU') : '—'}</td>
+                        <td>${expNames[lang][e.expense_type] || e.expense_type}</td>
+                        <td>${money(e.amount)}</td>
+                        <td>${e.description || '—'}</td>
+                        <td>${e.manager_name || '—'}</td>
+                    </tr>`).join('');
+            } else {
+                tbody.innerHTML = `<tr><td colspan="5" class="empty">${T[lang].empty4}</td></tr>`;
+            }
+        } catch (e) { console.error(e); }
     }
 
     updateUI();
