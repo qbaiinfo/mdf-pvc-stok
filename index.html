@@ -686,6 +686,8 @@
         const mgr = document.getElementById('managerSelect').value;
         const pwd = document.getElementById('passwordInput').value;
         
+        console.log('Login attempt:', { mgr, pwd });
+
         // Parola kontrolü
         const passwords = {
             'tilek': 'Test1234!',
@@ -693,19 +695,29 @@
         };
 
         if (!mgr) {
-            alert(t('alertSelectManager'));
+            alert('⚠️ Менеджерді таңдаңыз!');
+            console.log('No manager selected');
             return;
         }
 
         if (pwd !== passwords[mgr]) {
-            alert('Парола қате!');
+            alert('❌ Парола қате! Түзеңіз: Test1234!');
+            console.log('Wrong password. Expected:', passwords[mgr], 'Got:', pwd);
             return;
         }
 
+        console.log('Password correct, logging in...');
         manager = mgr;
-        document.getElementById('loginScreen').classList.add('hidden');
-        document.getElementById('dashboardScreen').classList.remove('hidden');
-        loadDashboard();
+        
+        try {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('dashboardScreen').classList.remove('hidden');
+            console.log('Dashboard shown');
+            loadDashboard();
+        } catch (e) {
+            console.error('Login error:', e);
+            alert('Қате: ' + e.message);
+        }
     }
 
     function loginGuest() {
@@ -832,8 +844,12 @@
 
     async function loadDashboard() {
         try {
+            console.log('Loading dashboard...');
             const { data: orders } = await supabase.from('orders').select('*').limit(5).order('created_at', { ascending: false });
             const { data: customers } = await supabase.from('customers').select('total_debt');
+
+            console.log('Orders:', orders);
+            console.log('Customers:', customers);
 
             const debt = customers?.reduce((s, c) => s + (c.total_debt || 0), 0) || 0;
             document.getElementById('orderCount').textContent = orders?.length || 0;
@@ -849,8 +865,10 @@
                     tbody.appendChild(tr);
                 });
             }
+            console.log('Dashboard loaded successfully');
         } catch (e) {
-            console.error(e);
+            console.error('Dashboard error:', e);
+            alert('Dashboard hata: ' + e.message);
         }
     }
 
