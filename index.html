@@ -321,6 +321,59 @@
         .badge.paid { border-color: var(--black); color: var(--black); }
         .badge.debt { border-color: #b91c1c; color: #b91c1c; }
 
+        .cashbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            max-width: 900px;
+        }
+
+        .cash-card {
+            background: var(--white);
+            border: 1px solid var(--gray-lighter);
+            padding: 36px;
+        }
+
+        .cash-name {
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--gray);
+            margin-bottom: 8px;
+        }
+
+        .cash-balance {
+            font-size: 42px;
+            font-weight: 300;
+            letter-spacing: -1px;
+            margin-bottom: 32px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid var(--gray-lighter);
+        }
+
+        .cash-balance.negative { color: #b91c1c; }
+
+        .cash-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+
+        .cash-row:last-child { margin-bottom: 0; }
+
+        .cash-row-label {
+            color: var(--gray);
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .cash-row-value { font-weight: 500; }
+        .cash-row-value.in { color: #15803d; }
+        .cash-row-value.out { color: #b91c1c; }
+
         .hidden { display: none !important; }
 
         @media (max-width: 768px) {
@@ -371,6 +424,7 @@
 
     <div class="nav">
         <button class="nav-item active" onclick="showTab('dashboard', this)" id="navDash">Панель</button>
+        <button class="nav-item" onclick="showTab('cashbox', this)" id="navCash">Касса</button>
         <button class="nav-item" onclick="showTab('neworder', this)" id="navNew">Жаңа тапсырыс</button>
         <button class="nav-item" onclick="showTab('orders', this)" id="navOrders">Тапсырыстар</button>
         <button class="nav-item" onclick="showTab('customers', this)" id="navCustomers">Берешеклі</button>
@@ -415,6 +469,16 @@
                         <tr><td colspan="6" class="empty" id="empty1">Тапсырыс жоқ</td></tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <!-- CASHBOX -->
+        <div id="cashbox" class="section">
+            <h1 class="page-title" id="cashTitle">Касса</h1>
+            <div class="page-eyebrow" id="cashEyebrow">Менеджерлердің кассасы</div>
+
+            <div class="cashbox-grid" id="cashboxGrid">
+                <!-- JS doldurur -->
             </div>
         </div>
 
@@ -568,6 +632,13 @@
 
             <div class="form-grid">
                 <div class="field">
+                    <label id="lblExpCategory">Категория</label>
+                    <select id="expCategory" onchange="toggleExpTypes()">
+                        <option value="business" id="catBusiness">Жұмыс шығыны</option>
+                        <option value="personal" id="catPersonal">Жеке шығын</option>
+                    </select>
+                </div>
+                <div class="field">
                     <label id="lblExpType">Түрі</label>
                     <select id="expType">
                         <option value="paint" id="et1">Бояу</option>
@@ -599,14 +670,15 @@
                     <thead>
                         <tr>
                             <th id="e1">Күні</th>
-                            <th id="e2">Түрі</th>
+                            <th id="e2">Категория</th>
+                            <th id="e2b">Түрі</th>
                             <th id="e3">Сома</th>
                             <th id="e4">Сипаттама</th>
                             <th id="e5">Менеджер</th>
                         </tr>
                     </thead>
                     <tbody id="expBody">
-                        <tr><td colspan="5" class="empty" id="empty4">Шығын жоқ</td></tr>
+                        <tr><td colspan="6" class="empty" id="empty4">Шығын жоқ</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -631,10 +703,12 @@
         ru: {
             loginSub: 'Управление складом', lblManager: 'Менеджер', lblPassword: 'Пароль',
             btnLogin: 'Войти', btnLogout: 'Выйти',
-            navDash: 'Панель', navNew: 'Новый заказ', navOrders: 'Заказы', navCustomers: 'Должники', navExpenses: 'Расходы',
+            navDash: 'Панель', navCash: 'Касса', navNew: 'Новый заказ', navOrders: 'Заказы', navCustomers: 'Должники', navExpenses: 'Расходы',
             dashTitle: 'Панель управления', dashEyebrow: 'Общий обзор',
             statOrders: 'Всего заказов', statDebt: 'Общий долг', statExpense: 'Всего расходов',
             recentTitle: 'Последние заказы',
+            cashTitle: 'Касса', cashEyebrow: 'Касса менеджеров',
+            cashIncome: 'Поступления', cashBusiness: 'Расходы на работу', cashPersonal: 'Личные расходы', cashBalance: 'Баланс',
             th1:'Клиент', th2:'Тип', th3:'Сумма', th4:'Оплачено', th5:'Долг', th6:'Менеджер', empty1:'Нет заказов',
             newTitle:'Новый заказ', newEyebrow:'Создание заказа',
             custBlock:'Клиент', lblFirstName:'Имя', lblLastName:'Фамилия', lblPhone:'Телефон',
@@ -646,18 +720,21 @@
             ordersTitle:'Заказы', ordersEyebrow:'Все заказы',
             o1:'Клиент', o2:'Тип', o3:'Дата', o4:'Итого', o5:'Оплачено', o6:'Долг', o7:'Менеджер', empty2:'Нет заказов',
             custTitle:'Должники', custEyebrow:'Клиенты с долгом', c1:'ФИО', c2:'Телефон', c3:'Долг', empty3:'Нет должников',
-            expTitle:'Расходы', expEyebrow:'Учёт расходов', lblExpType:'Тип', lblExpAmount:'Сумма (₸)', lblExpDesc:'Описание',
+            expTitle:'Расходы', expEyebrow:'Учёт расходов', lblExpCategory:'Категория', lblExpType:'Тип', lblExpAmount:'Сумма (₸)', lblExpDesc:'Описание',
+            catBusiness:'Расход на работу', catPersonal:'Личный расход',
             et1:'Краска', et2:'MDF', et3:'Наждачка', et4:'Растворитель', et5:'PVC', et6:'Клей', et7:'Зарплата', et8:'Прочее',
             btnSaveExp:'Сохранить', expListTitle:'Список расходов',
-            e1:'Дата', e2:'Тип', e3:'Сумма', e4:'Описание', e5:'Менеджер', empty4:'Нет расходов'
+            e1:'Дата', e2:'Категория', e2b:'Тип', e3:'Сумма', e4:'Описание', e5:'Менеджер', empty4:'Нет расходов'
         },
         kz: {
             loginSub: 'Қойма басқару', lblManager: 'Менеджер', lblPassword: 'Құпия сөз',
             btnLogin: 'Кіру', btnLogout: 'Шығу',
-            navDash: 'Панель', navNew: 'Жаңа тапсырыс', navOrders: 'Тапсырыстар', navCustomers: 'Берешеклі', navExpenses: 'Шығындар',
+            navDash: 'Панель', navCash: 'Касса', navNew: 'Жаңа тапсырыс', navOrders: 'Тапсырыстар', navCustomers: 'Берешеклі', navExpenses: 'Шығындар',
             dashTitle: 'Басқару панелі', dashEyebrow: 'Жалпы шолу',
             statOrders: 'Барлық тапсырыстар', statDebt: 'Жалпы берешек', statExpense: 'Жалпы шығындар',
             recentTitle: 'Соңғы тапсырыстар',
+            cashTitle: 'Касса', cashEyebrow: 'Менеджерлердің кассасы',
+            cashIncome: 'Түсімдер', cashBusiness: 'Жұмыс шығыны', cashPersonal: 'Жеке шығын', cashBalance: 'Қалдық',
             th1:'Клиент', th2:'Түрі', th3:'Сома', th4:'Төленді', th5:'Берешек', th6:'Менеджер', empty1:'Тапсырыс жоқ',
             newTitle:'Жаңа тапсырыс', newEyebrow:'Тапсырыс құру',
             custBlock:'Клиент', lblFirstName:'Аты', lblLastName:'Тегі', lblPhone:'Телефон',
@@ -669,10 +746,11 @@
             ordersTitle:'Тапсырыстар', ordersEyebrow:'Барлық тапсырыстар',
             o1:'Клиент', o2:'Түрі', o3:'Күні', o4:'Барлығы', o5:'Төленді', o6:'Берешек', o7:'Менеджер', empty2:'Тапсырыс жоқ',
             custTitle:'Берешеклі', custEyebrow:'Қарызы бар клиенттер', c1:'Аты-жөні', c2:'Телефон', c3:'Берешек', empty3:'Берешек жоқ',
-            expTitle:'Шығындар', expEyebrow:'Шығын тіркеу', lblExpType:'Түрі', lblExpAmount:'Сома (₸)', lblExpDesc:'Сипаттама',
+            expTitle:'Шығындар', expEyebrow:'Шығын тіркеу', lblExpCategory:'Категория', lblExpType:'Түрі', lblExpAmount:'Сома (₸)', lblExpDesc:'Сипаттама',
+            catBusiness:'Жұмыс шығыны', catPersonal:'Жеке шығын',
             et1:'Бояу', et2:'MDF', et3:'Құм қағазы', et4:'Ерітіндісі', et5:'PVC', et6:'Желім', et7:'Жалақы', et8:'Басқа',
             btnSaveExp:'Сақтау', expListTitle:'Шығындар тізімі',
-            e1:'Күні', e2:'Түрі', e3:'Сома', e4:'Сипаттама', e5:'Менеджер', empty4:'Шығын жоқ'
+            e1:'Күні', e2:'Категория', e2b:'Түрі', e3:'Сома', e4:'Сипаттама', e5:'Менеджер', empty4:'Шығын жоқ'
         }
     };
 
@@ -687,6 +765,7 @@
     function toggleLang() {
         lang = lang === 'ru' ? 'kz' : 'ru';
         updateUI();
+        toggleExpTypes();
     }
 
     function money(n) {
@@ -720,6 +799,7 @@
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         el.classList.add('active');
         if (name === 'dashboard') loadDashboard();
+        if (name === 'cashbox') loadCashbox();
         if (name === 'orders') loadOrders();
         if (name === 'customers') loadCustomers();
         if (name === 'expenses') loadExpenses();
@@ -835,6 +915,7 @@
         try {
             const { error } = await db.from('expenses').insert([{
                 manager_name: manager,
+                category: document.getElementById('expCategory').value,
                 expense_type: document.getElementById('expType').value,
                 amount: amount,
                 description: document.getElementById('expDesc').value || null
@@ -850,6 +931,19 @@
         } finally {
             btn.disabled = false;
         }
+    }
+
+    function toggleExpTypes() {
+        const cat = document.getElementById('expCategory').value;
+        const typeSelect = document.getElementById('expType');
+        const workTypes = ['paint','mdf','sand','thin','pvc','glue','salary','other'];
+        const personalTypes = ['car','home','other'];
+        const labels = {
+            kz: {paint:'Бояу',mdf:'MDF',sand:'Құм қағазы',thin:'Ерітіндісі',pvc:'PVC',glue:'Желім',salary:'Жалақы',car:'Көлік',home:'Үй',other:'Басқа'},
+            ru: {paint:'Краска',mdf:'MDF',sand:'Наждачка',thin:'Растворитель',pvc:'PVC',glue:'Клей',salary:'Зарплата',car:'Машина',home:'Дом',other:'Прочее'}
+        };
+        const list = cat === 'personal' ? personalTypes : workTypes;
+        typeSelect.innerHTML = list.map(v => `<option value="${v}">${labels[lang][v]}</option>`).join('');
     }
 
     async function loadDashboard() {
@@ -919,26 +1013,85 @@
         } catch (e) { console.error(e); }
     }
 
+    async function loadCashbox() {
+        try {
+            const { data: orders } = await db.from('orders').select('admin_accepted, paid_amount');
+            const { data: expenses } = await db.from('expenses').select('manager_name, amount, category');
+
+            const managers = ['Tilek', 'Mirza'];
+            const grid = document.getElementById('cashboxGrid');
+            const t = T[lang];
+
+            grid.innerHTML = managers.map(mgr => {
+                const income = (orders || [])
+                    .filter(o => o.admin_accepted === mgr)
+                    .reduce((s, o) => s + (o.paid_amount || 0), 0);
+
+                const business = (expenses || [])
+                    .filter(e => e.manager_name === mgr && (e.category || 'business') === 'business')
+                    .reduce((s, e) => s + (e.amount || 0), 0);
+
+                const personal = (expenses || [])
+                    .filter(e => e.manager_name === mgr && e.category === 'personal')
+                    .reduce((s, e) => s + (e.amount || 0), 0);
+
+                const balance = income - business - personal;
+                const negClass = balance < 0 ? ' negative' : '';
+
+                return `
+                    <div class="cash-card">
+                        <div class="cash-name">${mgr}</div>
+                        <div class="cash-balance${negClass}">${money(balance)}</div>
+                        <div class="cash-row">
+                            <span class="cash-row-label">${t.cashIncome}</span>
+                            <span class="cash-row-value in">+${money(income)}</span>
+                        </div>
+                        <div class="cash-row">
+                            <span class="cash-row-label">${t.cashBusiness}</span>
+                            <span class="cash-row-value out">−${money(business)}</span>
+                        </div>
+                        <div class="cash-row">
+                            <span class="cash-row-label">${t.cashPersonal}</span>
+                            <span class="cash-row-value out">−${money(personal)}</span>
+                        </div>
+                    </div>`;
+            }).join('');
+        } catch (e) { console.error(e); }
+    }
+
     async function loadExpenses() {
         try {
             const { data: expenses } = await db.from('expenses').select('*').order('expense_date', { ascending: false });
             const tbody = document.getElementById('expBody');
+            const catNames = {
+                kz: {business:'Жұмыс', personal:'Жеке'},
+                ru: {business:'Работа', personal:'Личный'}
+            };
+            const typeNames = {
+                kz: {paint:'Бояу',mdf:'MDF',sand:'Құм қағазы',thin:'Ерітіндісі',pvc:'PVC',glue:'Желім',salary:'Жалақы',car:'Көлік',home:'Үй',other:'Басқа'},
+                ru: {paint:'Краска',mdf:'MDF',sand:'Наждачка',thin:'Растворитель',pvc:'PVC',glue:'Клей',salary:'Зарплата',car:'Машина',home:'Дом',other:'Прочее'}
+            };
             if ((expenses || []).length) {
-                tbody.innerHTML = expenses.map(e => `
+                tbody.innerHTML = expenses.map(e => {
+                    const cat = e.category || 'business';
+                    return `
                     <tr>
                         <td>${e.expense_date ? new Date(e.expense_date).toLocaleDateString('ru-RU') : '—'}</td>
-                        <td>${expNames[lang][e.expense_type] || e.expense_type}</td>
+                        <td>${catNames[lang][cat]}</td>
+                        <td>${typeNames[lang][e.expense_type] || e.expense_type}</td>
                         <td>${money(e.amount)}</td>
                         <td>${e.description || '—'}</td>
                         <td>${e.manager_name || '—'}</td>
-                    </tr>`).join('');
+                    </tr>`;
+                }).join('');
             } else {
-                tbody.innerHTML = `<tr><td colspan="5" class="empty">${T[lang].empty4}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="empty">${T[lang].empty4}</td></tr>`;
             }
         } catch (e) { console.error(e); }
     }
 
     updateUI();
+    toggleExpTypes();
 </script>
 
 </body>
