@@ -1129,6 +1129,7 @@
         if (!mgr) { alert(lang==='ru'?'Выберите менеджера':'Менеджерді таңдаңыз'); return; }
         if (pwd !== 'Test1234!') { alert(lang==='ru'?'Неверный пароль':'Құпия сөз қате'); return; }
         manager = mgr;
+        try { localStorage.setItem('mdf_session', mgr); } catch(e) {}
         document.getElementById('userTag').textContent = mgr;
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('app').style.display = 'block';
@@ -1138,10 +1139,23 @@
 
     function logout() {
         manager = null;
+        try { localStorage.removeItem('mdf_session'); } catch(e) {}
         document.getElementById('managerSelect').value = '';
         document.getElementById('passwordInput').value = '';
         document.getElementById('loginScreen').style.display = 'flex';
         document.getElementById('app').style.display = 'none';
+    }
+
+    function restoreSession() {
+        let saved = null;
+        try { saved = localStorage.getItem('mdf_session'); } catch(e) {}
+        if (saved === 'Tilek' || saved === 'Mirza') {
+            manager = saved;
+            document.getElementById('userTag').textContent = saved;
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+            loadDashboard();
+        }
     }
 
     function showTab(name, el) {
@@ -1797,6 +1811,7 @@
 
     updateUI();
     toggleExpTypes();
+    restoreSession();
 </script>
 
 </body>
