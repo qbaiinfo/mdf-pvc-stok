@@ -1350,21 +1350,29 @@
         typeSelect.innerHTML = list.map(v => `<option value="${v}">${labels[lang][v]}</option>`).join('');
     }
 
+    // Arşivlenmiş müşterilerin telefonlarını getir (siparişlerini gizlemek için)
+    async function getArchivedPhones() {
+        const { data } = await db.from('customers').select('phone').eq('archived', true);
+        return new Set((data || []).map(c => c.phone));
+    }
+
     async function loadDashboard() {
         try {
-            const { data: orders } = await db.from('orders').select('*').order('created_at', { ascending: false });
+            const archivedPhones = await getArchivedPhones();
+            const { data: allOrders } = await db.from('orders').select('*').order('created_at', { ascending: false });
+            const orders = (allOrders || []).filter(o => !archivedPhones.has(o.customer_phone));
             const { data: customers } = await db.from('customers').select('total_debt');
             const { data: expenses } = await db.from('expenses').select('amount');
 
             const totalDebt = (customers || []).reduce((s, c) => s + (c.total_debt || 0), 0);
             const totalExp = (expenses || []).reduce((s, e) => s + (e.amount || 0), 0);
 
-            document.getElementById('valOrders').textContent = (orders || []).length;
+            document.getElementById('valOrders').textContent = orders.length;
             document.getElementById('valDebt').textContent = money(totalDebt);
             document.getElementById('valExpense').textContent = money(totalExp);
 
             const tbody = document.getElementById('recentBody');
-            const recent = (orders || []).slice(0, 5);
+            const recent = orders.slice(0, 5);
             if (recent.length) {
                 tbody.innerHTML = recent.map(o => `
                     <tr>
@@ -1385,8 +1393,9 @@
 
     async function loadOrders() {
         try {
-            const { data: orders } = await db.from('orders').select('*').order('created_at', { ascending: false });
-            ordersCache = orders || [];
+            const archivedPhones = await getArchivedPhones();
+            const { data: allOrders } = await db.from('orders').select('*').order('created_at', { ascending: false });
+            ordersCache = (allOrders || []).filter(o => !archivedPhones.has(o.customer_phone));
             const tbody = document.getElementById('ordersBody');
             if (ordersCache.length) {
                 tbody.innerHTML = ordersCache.map(o => `
@@ -1603,6 +1612,7 @@
         try {
             await db.from('customers').update({ archived: true }).eq('phone', phone);
             loadCustomers();
+            loadDashboard();
         } catch (e) {
             alert((lang==='ru'?'Ошибка: ':'Қате: ') + e.message);
         }
@@ -1636,6 +1646,7 @@
         try {
             await db.from('customers').update({ archived: false }).eq('phone', phone);
             loadArchive();
+            loadDashboard();
         } catch (e) {
             alert((lang==='ru'?'Ошибка: ':'Қате: ') + e.message);
         }
