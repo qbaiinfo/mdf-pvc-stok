@@ -644,6 +644,7 @@
         <button class="nav-item" onclick="showTab('neworder', this)" id="navNew">Жаңа тапсырыс</button>
         <button class="nav-item" onclick="showTab('orders', this)" id="navOrders">Тапсырыстар</button>
         <button class="nav-item" onclick="showTab('customers', this)" id="navCustomers">Берешеклі</button>
+        <button class="nav-item" onclick="showTab('archive', this)" id="navArchive">Архив</button>
         <button class="nav-item" onclick="showTab('expenses', this)" id="navExpenses">Шығындар</button>
         <button class="nav-item" onclick="showTab('reports', this)" id="navReports">Есептер</button>
     </div>
@@ -850,10 +851,34 @@
                             <th id="c2">Телефон</th>
                             <th id="c2b">Менеджер</th>
                             <th id="c3">Берешек</th>
+                            <th id="c4"></th>
                         </tr>
                     </thead>
                     <tbody id="custBody">
-                        <tr><td colspan="4" class="empty" id="empty3">Берешек жоқ</td></tr>
+                        <tr><td colspan="5" class="empty" id="empty3">Берешек жоқ</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ARCHIVE -->
+        <div id="archive" class="section">
+            <h1 class="page-title" id="archTitle">Архив</h1>
+            <div class="page-eyebrow" id="archEyebrow">Аяқталған клиенттер</div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th id="a1">Аты-жөні</th>
+                            <th id="a2">Телефон</th>
+                            <th id="a2b">Менеджер</th>
+                            <th id="a3">Барлық тапсырыс</th>
+                            <th id="a4"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="archBody">
+                        <tr><td colspan="5" class="empty" id="emptyArch">Архивте жоқ</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -1049,7 +1074,7 @@
         ru: {
             loginSub: 'Управление складом', lblManager: 'Менеджер', lblPassword: 'Пароль',
             btnLogin: 'Войти', btnLogout: 'Выйти',
-            navDash: 'Панель', navCash: 'Касса', navNew: 'Новый заказ', navOrders: 'Заказы', navCustomers: 'Должники', navExpenses: 'Расходы', navReports: 'Отчёты',
+            navDash: 'Панель', navCash: 'Касса', navNew: 'Новый заказ', navOrders: 'Заказы', navCustomers: 'Должники', navArchive: 'Архив', navExpenses: 'Расходы', navReports: 'Отчёты',
             dashTitle: 'Панель управления', dashEyebrow: 'Общий обзор',
             statOrders: 'Всего заказов', statDebt: 'Общий долг', statExpense: 'Всего расходов',
             recentTitle: 'Последние заказы',
@@ -1066,6 +1091,7 @@
             ordersTitle:'Заказы', ordersEyebrow:'Все заказы',
             o1:'Клиент', o2:'Тип', o3:'Дата', o4:'Итого', o5:'Оплачено', o6:'Долг', o7:'Менеджер', empty2:'Нет заказов',
             custTitle:'Должники', custEyebrow:'Клиенты с долгом', c1:'ФИО', c2:'Телефон', c2b:'Менеджер', c3:'Долг', empty3:'Нет должников',
+            archTitle:'Архив', archEyebrow:'Завершённые клиенты', a1:'ФИО', a2:'Телефон', a2b:'Менеджер', a3:'Всего заказов', emptyArch:'Архив пуст',
             lblFilterMgr:'Менеджер', filterAll:'Все',
             repTitle:'Отчёты', repEyebrow:'Отчёт за период', lblRepPeriod:'Период', lblRepMgr:'Менеджер',
             repWeek:'Неделя', repMonth:'Месяц', repAll:'Всё', repMgrAll:'Все',
@@ -1082,7 +1108,7 @@
         kz: {
             loginSub: 'Қойма басқару', lblManager: 'Менеджер', lblPassword: 'Құпия сөз',
             btnLogin: 'Кіру', btnLogout: 'Шығу',
-            navDash: 'Панель', navCash: 'Касса', navNew: 'Жаңа тапсырыс', navOrders: 'Тапсырыстар', navCustomers: 'Берешеклі', navExpenses: 'Шығындар', navReports: 'Есептер',
+            navDash: 'Панель', navCash: 'Касса', navNew: 'Жаңа тапсырыс', navOrders: 'Тапсырыстар', navCustomers: 'Берешеклі', navArchive: 'Архив', navExpenses: 'Шығындар', navReports: 'Есептер',
             dashTitle: 'Басқару панелі', dashEyebrow: 'Жалпы шолу',
             statOrders: 'Барлық тапсырыстар', statDebt: 'Жалпы берешек', statExpense: 'Жалпы шығындар',
             recentTitle: 'Соңғы тапсырыстар',
@@ -1099,6 +1125,7 @@
             ordersTitle:'Тапсырыстар', ordersEyebrow:'Барлық тапсырыстар',
             o1:'Клиент', o2:'Түрі', o3:'Күні', o4:'Барлығы', o5:'Төленді', o6:'Берешек', o7:'Менеджер', empty2:'Тапсырыс жоқ',
             custTitle:'Берешеклі', custEyebrow:'Қарызы бар клиенттер', c1:'Аты-жөні', c2:'Телефон', c2b:'Менеджер', c3:'Берешек', empty3:'Берешек жоқ',
+            archTitle:'Архив', archEyebrow:'Аяқталған клиенттер', a1:'Аты-жөні', a2:'Телефон', a2b:'Менеджер', a3:'Барлық тапсырыс', emptyArch:'Архивте жоқ',
             lblFilterMgr:'Менеджер', filterAll:'Барлығы',
             repTitle:'Есептер', repEyebrow:'Кезеңдік есеп', lblRepPeriod:'Кезең', lblRepMgr:'Менеджер',
             repWeek:'Апта', repMonth:'Ай', repAll:'Барлығы', repMgrAll:'Барлығы',
@@ -1176,6 +1203,7 @@
         if (name === 'cashbox') loadCashbox();
         if (name === 'orders') loadOrders();
         if (name === 'customers') loadCustomers();
+        if (name === 'archive') loadArchive();
         if (name === 'expenses') loadExpenses();
         if (name === 'reports') loadReports();
     }
@@ -1533,7 +1561,7 @@
 
     async function loadCustomers() {
         try {
-            const { data: customers } = await db.from('customers').select('*').gt('total_debt', 0).order('total_debt', { ascending: false });
+            const { data: customers } = await db.from('customers').select('*').or('archived.is.null,archived.eq.false').order('total_debt', { ascending: false });
             const { data: orders } = await db.from('orders').select('customer_phone, admin_accepted, remaining_balance');
 
             const phoneMgr = {};
@@ -1555,12 +1583,62 @@
             if (list.length) {
                 tbody.innerHTML = list.map(c => {
                     const name = ((c.first_name || '') + ' ' + (c.last_name || '')).trim() || '—';
-                    return `<tr class="clickable" onclick="showPayModal('${c.phone}')"><td>${name}</td><td>${c.phone}</td><td>${c.manager}</td><td><span class="badge debt">${money(c.total_debt)}</span></td></tr>`;
+                    const debt = c.total_debt || 0;
+                    if (debt > 0) {
+                        // Borçlu: tıklayınca ödeme modalı
+                        return `<tr class="clickable" onclick="showPayModal('${c.phone}')"><td>${name}</td><td>${c.phone}</td><td>${c.manager}</td><td><span class="badge debt">${money(debt)}</span></td><td></td></tr>`;
+                    } else {
+                        // Borcu bitti: arşivle butonu
+                        return `<tr><td>${name}</td><td>${c.phone}</td><td>${c.manager}</td><td><span class="badge paid">✓ ${lang==='ru'?'Оплачено':'Төленді'}</span></td><td style="text-align:right;"><button class="top-btn" onclick="archiveCustomer('${c.phone}')">${lang==='ru'?'В архив':'Архивтеу'}</button></td></tr>`;
+                    }
                 }).join('');
             } else {
-                tbody.innerHTML = `<tr><td colspan="4" class="empty">${T[lang].empty3}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="empty">${T[lang].empty3}</td></tr>`;
             }
         } catch (e) { console.error(e); }
+    }
+
+    async function archiveCustomer(phone) {
+        if (!confirm(lang==='ru'?'Отправить клиента в архив?':'Клиентті архивке жіберу?')) return;
+        try {
+            await db.from('customers').update({ archived: true }).eq('phone', phone);
+            loadCustomers();
+        } catch (e) {
+            alert((lang==='ru'?'Ошибка: ':'Қате: ') + e.message);
+        }
+    }
+
+    async function loadArchive() {
+        try {
+            const { data: customers } = await db.from('customers').select('*').eq('archived', true).order('updated_at', { ascending: false });
+            const { data: orders } = await db.from('orders').select('customer_phone, admin_accepted, total_price');
+
+            const phoneMgr = {};
+            const phoneTotal = {};
+            (orders || []).forEach(o => {
+                phoneMgr[o.customer_phone] = o.admin_accepted;
+                phoneTotal[o.customer_phone] = (phoneTotal[o.customer_phone] || 0) + (o.total_price || 0);
+            });
+
+            const tbody = document.getElementById('archBody');
+            if ((customers || []).length) {
+                tbody.innerHTML = customers.map(c => {
+                    const name = ((c.first_name || '') + ' ' + (c.last_name || '')).trim() || '—';
+                    return `<tr><td>${name}</td><td>${c.phone}</td><td>${phoneMgr[c.phone] || '—'}</td><td>${money(phoneTotal[c.phone] || 0)}</td><td style="text-align:right;"><button class="top-btn" onclick="unarchiveCustomer('${c.phone}')">${lang==='ru'?'Вернуть':'Қайтару'}</button></td></tr>`;
+                }).join('');
+            } else {
+                tbody.innerHTML = `<tr><td colspan="5" class="empty">${T[lang].emptyArch || 'Архивте жоқ'}</td></tr>`;
+            }
+        } catch (e) { console.error(e); }
+    }
+
+    async function unarchiveCustomer(phone) {
+        try {
+            await db.from('customers').update({ archived: false }).eq('phone', phone);
+            loadArchive();
+        } catch (e) {
+            alert((lang==='ru'?'Ошибка: ':'Қате: ') + e.message);
+        }
     }
 
     function exportCustomersExcel() {
