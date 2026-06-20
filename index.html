@@ -1594,7 +1594,8 @@
     async function loadCustomers() {
         try {
             // Borçları doğrudan açık (arşivlenmemiş) siparişlerden hesapla - en güvenilir yöntem
-            const { data: orders } = await db.from('orders').select('customer_phone, customer_name, admin_accepted, remaining_balance, archived');
+            const { data: orders, error: ordErr } = await db.from('orders').select('customer_phone, customer_name, admin_accepted, remaining_balance, archived');
+            if (ordErr) throw ordErr;
             const { data: customers } = await db.from('customers').select('*');
 
             const custInfo = {};
@@ -1605,8 +1606,8 @@
             const mgrByPhone = {};
             const nameByPhone = {};
             (orders || []).forEach(o => {
-                if (o.archived) return; // arşivli siparişler borç sayılmaz
-                const bal = o.remaining_balance || 0;
+                if (o.archived === true) return; // arşivli siparişler borç sayılmaz
+                const bal = Number(o.remaining_balance) || 0;
                 if (bal > 0) {
                     debtByPhone[o.customer_phone] = (debtByPhone[o.customer_phone] || 0) + bal;
                     mgrByPhone[o.customer_phone] = o.admin_accepted;
@@ -1640,7 +1641,11 @@
             } else {
                 tbody.innerHTML = `<tr><td colspan="5" class="empty">${T[lang].empty3}</td></tr>`;
             }
-        } catch (e) { console.error(e); }
+        } catch (e) {
+            console.error('loadCustomers error:', e);
+            const tbody = document.getElementById('custBody');
+            tbody.innerHTML = `<tr><td colspan="5" class="empty" style="color:#b91c1c;">${(lang==='ru'?'Ошибка: ':'Қате: ')}${e.message}</td></tr>`;
+        }
     }
 
     async function loadArchive() {
