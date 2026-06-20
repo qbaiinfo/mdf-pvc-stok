@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MDF & PVC</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 
@@ -374,7 +378,210 @@
         .cash-row-value.in { color: #15803d; }
         .cash-row-value.out { color: #b91c1c; }
 
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 20px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-btns { display: flex; gap: 8px; }
+
+        tr.clickable { cursor: pointer; }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(26,26,26,0.5);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .overlay.show { display: flex; }
+
+        .modal {
+            background: var(--white);
+            width: 100%;
+            max-width: 520px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .modal-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 32px;
+            border-bottom: 1px solid var(--gray-lighter);
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: var(--gray);
+            line-height: 1;
+        }
+
+        .modal-close:hover { color: var(--black); }
+
+        .modal-body { padding: 32px; }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--gray-lighter);
+            font-size: 14px;
+        }
+
+        .detail-row:last-child { border-bottom: none; }
+
+        .detail-label {
+            font-size: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--gray);
+        }
+
+        .detail-value { font-weight: 500; text-align: right; }
+
         .hidden { display: none !important; }
+
+        /* MODAL */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(26,26,26,0.5);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .modal-overlay.show { display: flex; }
+
+        .modal {
+            background: var(--white);
+            max-width: 520px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .modal-head {
+            padding: 32px 40px 24px;
+            border-bottom: 1px solid var(--gray-lighter);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray);
+            line-height: 1;
+            padding: 0;
+        }
+
+        .modal-close:hover { color: var(--black); }
+
+        .modal-body { padding: 32px 40px; }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--gray-lighter);
+            font-size: 14px;
+        }
+
+        .detail-row:last-child { border-bottom: none; }
+
+        .detail-label {
+            color: var(--gray);
+            font-size: 11px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .detail-value { font-weight: 500; text-align: right; }
+
+        .clickable { cursor: pointer; }
+        .clickable:hover td { background: var(--bg); }
+
+        .toolbar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .toolbar select {
+            padding: 10px 14px;
+            border: 1px solid var(--gray-light);
+            background: var(--white);
+            font-family: inherit;
+            font-size: 12px;
+            border-radius: 0;
+            cursor: pointer;
+        }
+
+        .btn-export {
+            background: transparent;
+            border: 1px solid var(--black);
+            color: var(--black);
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-export:hover { background: var(--black); color: var(--white); }
+
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1px;
+            background: var(--gray-lighter);
+            border: 1px solid var(--gray-lighter);
+            margin-bottom: 40px;
+        }
+
+        .report-cell { background: var(--white); padding: 28px; }
+        .report-cell-label {
+            font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+            color: var(--gray); margin-bottom: 12px;
+        }
+        .report-cell-value { font-size: 28px; font-weight: 300; }
+        .report-cell-value.in { color: #15803d; }
+        .report-cell-value.out { color: #b91c1c; }
 
         @media (max-width: 768px) {
             .topbar, .nav, .main { padding-left: 20px; padding-right: 20px; }
@@ -429,6 +636,7 @@
         <button class="nav-item" onclick="showTab('orders', this)" id="navOrders">Тапсырыстар</button>
         <button class="nav-item" onclick="showTab('customers', this)" id="navCustomers">Берешеклі</button>
         <button class="nav-item" onclick="showTab('expenses', this)" id="navExpenses">Шығындар</button>
+        <button class="nav-item" onclick="showTab('reports', this)" id="navReports">Есептер</button>
     </div>
 
     <div class="main">
@@ -609,17 +817,34 @@
         <div id="customers" class="section">
             <h1 class="page-title" id="custTitle">Берешеклі</h1>
             <div class="page-eyebrow" id="custEyebrow">Қарызы бар клиенттер</div>
+
+            <div class="toolbar">
+                <div class="field" style="margin:0; min-width:200px;">
+                    <label id="lblFilterMgr">Менеджер</label>
+                    <select id="custFilterMgr" onchange="loadCustomers()">
+                        <option value="all" id="filterAll">Барлығы</option>
+                        <option value="Tilek">Tilek</option>
+                        <option value="Mirza">Mirza</option>
+                    </select>
+                </div>
+                <div class="toolbar-btns">
+                    <button class="top-btn" onclick="exportCustomersPDF()">PDF</button>
+                    <button class="top-btn" onclick="exportCustomersExcel()">Excel</button>
+                </div>
+            </div>
+
             <div class="table-wrap">
                 <table>
                     <thead>
                         <tr>
                             <th id="c1">Аты-жөні</th>
                             <th id="c2">Телефон</th>
+                            <th id="c2b">Менеджер</th>
                             <th id="c3">Берешек</th>
                         </tr>
                     </thead>
                     <tbody id="custBody">
-                        <tr><td colspan="3" class="empty" id="empty3">Берешек жоқ</td></tr>
+                        <tr><td colspan="4" class="empty" id="empty3">Берешек жоқ</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -683,6 +908,63 @@
                 </table>
             </div>
         </div>
+        <!-- REPORTS -->
+        <div id="reports" class="section">
+            <h1 class="page-title" id="repTitle">Есептер</h1>
+            <div class="page-eyebrow" id="repEyebrow">Кезеңдік есеп</div>
+
+            <div class="toolbar">
+                <div class="field" style="margin:0; min-width:160px;">
+                    <label id="lblRepPeriod">Кезең</label>
+                    <select id="repPeriod" onchange="loadReports()">
+                        <option value="week" id="repWeek">Апта</option>
+                        <option value="month" id="repMonth">Ай</option>
+                        <option value="all" id="repAll">Барлығы</option>
+                    </select>
+                </div>
+                <div class="field" style="margin:0; min-width:160px;">
+                    <label id="lblRepMgr">Менеджер</label>
+                    <select id="repMgr" onchange="loadReports()">
+                        <option value="all" id="repMgrAll">Барлығы</option>
+                        <option value="Tilek">Tilek</option>
+                        <option value="Mirza">Mirza</option>
+                    </select>
+                </div>
+                <div class="toolbar-btns">
+                    <button class="top-btn" onclick="exportReportPDF()">PDF</button>
+                </div>
+            </div>
+
+            <div class="stats" id="repStats">
+                <!-- JS doldurur -->
+            </div>
+
+            <div class="block-title" id="repBreakdownTitle">Шығындар бөлінісі</div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th id="rb1">Категория</th>
+                            <th id="rb2">Сома</th>
+                        </tr>
+                    </thead>
+                    <tbody id="repBreakdownBody">
+                        <tr><td colspan="2" class="empty">—</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ORDER DETAIL MODAL -->
+<div id="detailOverlay" class="overlay" onclick="closeDetail(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-head">
+            <span id="modalTitle">Тапсырыс</span>
+            <button class="modal-close" onclick="closeDetailBtn()">✕</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
     </div>
 </div>
 
@@ -694,6 +976,33 @@
     let lang = 'kz';
     let manager = null;
 
+    // PDF için Kiril destekli font (Roboto) yükle
+    let pdfFontReady = false;
+    async function ensurePdfFont(doc) {
+        if (pdfFontReady && window._robotoBase64) {
+            doc.addFileToVFS('Roboto-Regular.ttf', window._robotoBase64);
+            doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
+            doc.setFont('Roboto');
+            return true;
+        }
+        try {
+            const res = await fetch('https://cdn.jsdelivr.net/gh/google/fonts/apache/roboto/static/Roboto-Regular.ttf');
+            const buf = await res.arrayBuffer();
+            let binary = '';
+            const bytes = new Uint8Array(buf);
+            for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+            window._robotoBase64 = btoa(binary);
+            pdfFontReady = true;
+            doc.addFileToVFS('Roboto-Regular.ttf', window._robotoBase64);
+            doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
+            doc.setFont('Roboto');
+            return true;
+        } catch (e) {
+            console.error('Font yüklenemedi, helvetica kullanılıyor', e);
+            return false;
+        }
+    }
+
     const expNames = {
         kz: {paint:'Бояу',mdf:'MDF',sand:'Құм қағазы',thin:'Ерітіндісі',pvc:'PVC',glue:'Желім',salary:'Жалақы',other:'Басқа'},
         ru: {paint:'Краска',mdf:'MDF',sand:'Наждачка',thin:'Растворитель',pvc:'PVC',glue:'Клей',salary:'Зарплата',other:'Прочее'}
@@ -703,7 +1012,7 @@
         ru: {
             loginSub: 'Управление складом', lblManager: 'Менеджер', lblPassword: 'Пароль',
             btnLogin: 'Войти', btnLogout: 'Выйти',
-            navDash: 'Панель', navCash: 'Касса', navNew: 'Новый заказ', navOrders: 'Заказы', navCustomers: 'Должники', navExpenses: 'Расходы',
+            navDash: 'Панель', navCash: 'Касса', navNew: 'Новый заказ', navOrders: 'Заказы', navCustomers: 'Должники', navExpenses: 'Расходы', navReports: 'Отчёты',
             dashTitle: 'Панель управления', dashEyebrow: 'Общий обзор',
             statOrders: 'Всего заказов', statDebt: 'Общий долг', statExpense: 'Всего расходов',
             recentTitle: 'Последние заказы',
@@ -719,7 +1028,13 @@
             payCash:'Наличные', payCard:'Карта', pay50:'50% / 50%', payCredit:'В кредит', btnSaveOrder:'Сохранить',
             ordersTitle:'Заказы', ordersEyebrow:'Все заказы',
             o1:'Клиент', o2:'Тип', o3:'Дата', o4:'Итого', o5:'Оплачено', o6:'Долг', o7:'Менеджер', empty2:'Нет заказов',
-            custTitle:'Должники', custEyebrow:'Клиенты с долгом', c1:'ФИО', c2:'Телефон', c3:'Долг', empty3:'Нет должников',
+            custTitle:'Должники', custEyebrow:'Клиенты с долгом', c1:'ФИО', c2:'Телефон', c2b:'Менеджер', c3:'Долг', empty3:'Нет должников',
+            lblFilterMgr:'Менеджер', filterAll:'Все',
+            repTitle:'Отчёты', repEyebrow:'Отчёт за период', lblRepPeriod:'Период', lblRepMgr:'Менеджер',
+            repWeek:'Неделя', repMonth:'Месяц', repAll:'Всё', repMgrAll:'Все',
+            repBreakdownTitle:'Разбивка расходов', rb1:'Категория', rb2:'Сумма',
+            repIncome:'Поступления', repBusiness:'Расходы работа', repPersonal:'Личные', repProfit:'Прибыль', repDebt:'Долги',
+            modalTitle:'Заказ',
             expTitle:'Расходы', expEyebrow:'Учёт расходов', lblExpCategory:'Категория', lblExpType:'Тип', lblExpAmount:'Сумма (₸)', lblExpDesc:'Описание',
             catBusiness:'Расход на работу', catPersonal:'Личный расход',
             et1:'Краска', et2:'MDF', et3:'Наждачка', et4:'Растворитель', et5:'PVC', et6:'Клей', et7:'Зарплата', et8:'Прочее',
@@ -729,7 +1044,7 @@
         kz: {
             loginSub: 'Қойма басқару', lblManager: 'Менеджер', lblPassword: 'Құпия сөз',
             btnLogin: 'Кіру', btnLogout: 'Шығу',
-            navDash: 'Панель', navCash: 'Касса', navNew: 'Жаңа тапсырыс', navOrders: 'Тапсырыстар', navCustomers: 'Берешеклі', navExpenses: 'Шығындар',
+            navDash: 'Панель', navCash: 'Касса', navNew: 'Жаңа тапсырыс', navOrders: 'Тапсырыстар', navCustomers: 'Берешеклі', navExpenses: 'Шығындар', navReports: 'Есептер',
             dashTitle: 'Басқару панелі', dashEyebrow: 'Жалпы шолу',
             statOrders: 'Барлық тапсырыстар', statDebt: 'Жалпы берешек', statExpense: 'Жалпы шығындар',
             recentTitle: 'Соңғы тапсырыстар',
@@ -745,7 +1060,13 @@
             payCash:'Ақша', payCard:'Карта', pay50:'50% / 50%', payCredit:'Бөлінбе', btnSaveOrder:'Сақтау',
             ordersTitle:'Тапсырыстар', ordersEyebrow:'Барлық тапсырыстар',
             o1:'Клиент', o2:'Түрі', o3:'Күні', o4:'Барлығы', o5:'Төленді', o6:'Берешек', o7:'Менеджер', empty2:'Тапсырыс жоқ',
-            custTitle:'Берешеклі', custEyebrow:'Қарызы бар клиенттер', c1:'Аты-жөні', c2:'Телефон', c3:'Берешек', empty3:'Берешек жоқ',
+            custTitle:'Берешеклі', custEyebrow:'Қарызы бар клиенттер', c1:'Аты-жөні', c2:'Телефон', c2b:'Менеджер', c3:'Берешек', empty3:'Берешек жоқ',
+            lblFilterMgr:'Менеджер', filterAll:'Барлығы',
+            repTitle:'Есептер', repEyebrow:'Кезеңдік есеп', lblRepPeriod:'Кезең', lblRepMgr:'Менеджер',
+            repWeek:'Апта', repMonth:'Ай', repAll:'Барлығы', repMgrAll:'Барлығы',
+            repBreakdownTitle:'Шығындар бөлінісі', rb1:'Категория', rb2:'Сома',
+            repIncome:'Түсімдер', repBusiness:'Жұмыс шығыны', repPersonal:'Жеке шығын', repProfit:'Пайда', repDebt:'Берешек',
+            modalTitle:'Тапсырыс',
             expTitle:'Шығындар', expEyebrow:'Шығын тіркеу', lblExpCategory:'Категория', lblExpType:'Түрі', lblExpAmount:'Сома (₸)', lblExpDesc:'Сипаттама',
             catBusiness:'Жұмыс шығыны', catPersonal:'Жеке шығын',
             et1:'Бояу', et2:'MDF', et3:'Құм қағазы', et4:'Ерітіндісі', et5:'PVC', et6:'Желім', et7:'Жалақы', et8:'Басқа',
@@ -803,6 +1124,7 @@
         if (name === 'orders') loadOrders();
         if (name === 'customers') loadCustomers();
         if (name === 'expenses') loadExpenses();
+        if (name === 'reports') loadReports();
     }
 
     function switchType() {
@@ -977,13 +1299,16 @@
         } catch (e) { console.error(e); }
     }
 
+    let ordersCache = [];
+
     async function loadOrders() {
         try {
             const { data: orders } = await db.from('orders').select('*').order('created_at', { ascending: false });
+            ordersCache = orders || [];
             const tbody = document.getElementById('ordersBody');
-            if ((orders || []).length) {
-                tbody.innerHTML = orders.map(o => `
-                    <tr>
+            if (ordersCache.length) {
+                tbody.innerHTML = ordersCache.map(o => `
+                    <tr class="clickable" onclick="showDetail('${o.id}')">
                         <td>${o.customer_name || o.customer_phone}</td>
                         <td>${o.order_type === 'mdf_boya' ? 'MDF' : 'PVC'}</td>
                         <td>${new Date(o.created_at).toLocaleDateString('ru-RU')}</td>
@@ -998,19 +1323,142 @@
         } catch (e) { console.error(e); }
     }
 
+    function showDetail(orderId) {
+        const o = ordersCache.find(x => x.id === orderId);
+        if (!o) return;
+        const isRu = lang === 'ru';
+        const payNames = {
+            kz: {cash:'Ақша', card:'Карта', '50':'50% / 50%', credit:'Бөлінбе'},
+            ru: {cash:'Наличные', card:'Карта', '50':'50% / 50%', credit:'В кредит'}
+        };
+        const L = isRu ? {
+            customer:'Клиент', phone:'Телефон', type:'Тип', date:'Дата', sqm:'Кв. метр',
+            thick:'Толщина', color:'Цвет', qty:'Захваты', total:'Итого', paid:'Оплачено',
+            debt:'Долг', pay:'Оплата', mgr:'Менеджер'
+        } : {
+            customer:'Клиент', phone:'Телефон', type:'Түрі', date:'Күні', sqm:'Шаршы метр',
+            thick:'Қалыңдық', color:'Түсі', qty:'Захват', total:'Барлығы', paid:'Төленді',
+            debt:'Берешек', pay:'Төлем', mgr:'Менеджер'
+        };
+
+        let rows = '';
+        const row = (label, val) => `<div class="detail-row"><span class="detail-label">${label}</span><span class="detail-value">${val}</span></div>`;
+
+        rows += row(L.customer, o.customer_name || '—');
+        rows += row(L.phone, o.customer_phone);
+        rows += row(L.type, o.order_type === 'mdf_boya' ? 'MDF Бояу' : 'PVC Қаптау');
+        rows += row(L.date, new Date(o.created_at).toLocaleString('ru-RU'));
+
+        if (o.order_type === 'mdf_boya') {
+            if (o.mdf_sqm) rows += row(L.sqm, o.mdf_sqm + ' м²');
+            if (o.mdf_thickness) rows += row(L.thick, o.mdf_thickness + ' мм');
+            if (o.paint_color) rows += row(L.color, o.paint_color);
+        } else {
+            if (o.pvc_sqm) rows += row(L.sqm, o.pvc_sqm + ' м²');
+            if (o.mdf_thickness_pvc) rows += row(L.thick, o.mdf_thickness_pvc + ' мм');
+            if (o.pvc_quantity) rows += row(L.qty, o.pvc_quantity);
+        }
+
+        rows += row(L.pay, payNames[lang][o.payment_method] || o.payment_method);
+        rows += row(L.total, money(o.total_price));
+        rows += row(L.paid, money(o.paid_amount));
+        rows += row(L.debt, o.remaining_balance > 0 ? '<span style="color:#b91c1c">'+money(o.remaining_balance)+'</span>' : '✓');
+        rows += row(L.mgr, o.admin_accepted);
+
+        document.getElementById('modalBody').innerHTML = rows;
+        document.getElementById('detailOverlay').classList.add('show');
+    }
+
+    function closeDetail(e) {
+        if (e.target.id === 'detailOverlay') {
+            document.getElementById('detailOverlay').classList.remove('show');
+        }
+    }
+
+    function closeDetailBtn() {
+        document.getElementById('detailOverlay').classList.remove('show');
+    }
+
+    let customersCache = [];
+
     async function loadCustomers() {
         try {
             const { data: customers } = await db.from('customers').select('*').gt('total_debt', 0).order('total_debt', { ascending: false });
+            const { data: orders } = await db.from('orders').select('customer_phone, admin_accepted, remaining_balance');
+
+            const phoneMgr = {};
+            (orders || []).forEach(o => {
+                if (o.remaining_balance > 0) phoneMgr[o.customer_phone] = o.admin_accepted;
+            });
+            (orders || []).forEach(o => { if (!phoneMgr[o.customer_phone]) phoneMgr[o.customer_phone] = o.admin_accepted; });
+
+            const filter = document.getElementById('custFilterMgr').value;
+            let list = (customers || []).map(c => ({
+                ...c,
+                manager: phoneMgr[c.phone] || '—'
+            }));
+
+            if (filter !== 'all') list = list.filter(c => c.manager === filter);
+            customersCache = list;
+
             const tbody = document.getElementById('custBody');
-            if ((customers || []).length) {
-                tbody.innerHTML = customers.map(c => {
+            if (list.length) {
+                tbody.innerHTML = list.map(c => {
                     const name = ((c.first_name || '') + ' ' + (c.last_name || '')).trim() || '—';
-                    return `<tr><td>${name}</td><td>${c.phone}</td><td><span class="badge debt">${money(c.total_debt)}</span></td></tr>`;
+                    return `<tr><td>${name}</td><td>${c.phone}</td><td>${c.manager}</td><td><span class="badge debt">${money(c.total_debt)}</span></td></tr>`;
                 }).join('');
             } else {
-                tbody.innerHTML = `<tr><td colspan="3" class="empty">${T[lang].empty3}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" class="empty">${T[lang].empty3}</td></tr>`;
             }
         } catch (e) { console.error(e); }
+    }
+
+    function exportCustomersExcel() {
+        if (!customersCache.length) { alert(lang==='ru'?'Нет данных':'Деректер жоқ'); return; }
+        const headers = lang==='ru' ? ['ФИО','Телефон','Менеджер','Долг'] : ['Аты-жөні','Телефон','Менеджер','Берешек'];
+        let csv = '\uFEFF' + headers.join(';') + '\n';
+        customersCache.forEach(c => {
+            const name = ((c.first_name||'')+' '+(c.last_name||'')).trim() || '-';
+            csv += [name, c.phone, c.manager, c.total_debt].join(';') + '\n';
+        });
+        const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        const mgr = document.getElementById('custFilterMgr').value;
+        link.download = `bereshekli_${mgr}_${new Date().toISOString().slice(0,10)}.csv`;
+        link.click();
+    }
+
+    async function exportCustomersPDF() {
+        if (!customersCache.length) { alert(lang==='ru'?'Нет данных':'Деректер жоқ'); return; }
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const useRoboto = await ensurePdfFont(doc);
+        const fontName = useRoboto ? 'Roboto' : 'helvetica';
+        const mgr = document.getElementById('custFilterMgr').value;
+        const title = (lang==='ru'?'Должники':'Берешеклі') + (mgr!=='all' ? ' — '+mgr : '');
+        doc.setFontSize(14);
+        doc.text(title, 14, 18);
+        doc.setFontSize(9);
+        doc.text(new Date().toLocaleDateString('ru-RU'), 14, 25);
+
+        const headers = lang==='ru' ? ['ФИО','Телефон','Менеджер','Долг'] : ['Аты-жөні','Телефон','Менеджер','Берешек'];
+        const body = customersCache.map(c => {
+            const name = ((c.first_name||'')+' '+(c.last_name||'')).trim() || '-';
+            return [name, c.phone, c.manager, money(c.total_debt)];
+        });
+        const total = customersCache.reduce((s,c)=>s+(c.total_debt||0),0);
+
+        doc.autoTable({
+            head: [headers],
+            body: body,
+            startY: 30,
+            styles: { fontSize: 9, font: fontName },
+            headStyles: { fillColor: [26,26,26], font: fontName },
+            footStyles: { fillColor: [240,240,240], textColor: [26,26,26], font: fontName },
+            foot: [['', '', lang==='ru'?'Итого:':'Барлығы:', money(total)]]
+        });
+        doc.save(`bereshekli_${mgr}_${new Date().toISOString().slice(0,10)}.pdf`);
     }
 
     async function loadCashbox() {
@@ -1057,6 +1505,123 @@
                     </div>`;
             }).join('');
         } catch (e) { console.error(e); }
+    }
+
+    let reportCache = null;
+
+    function periodStart(period) {
+        const now = new Date();
+        if (period === 'week') {
+            const d = new Date(now);
+            d.setDate(d.getDate() - 7);
+            return d;
+        }
+        if (period === 'month') {
+            const d = new Date(now);
+            d.setMonth(d.getMonth() - 1);
+            return d;
+        }
+        return new Date(2000, 0, 1);
+    }
+
+    async function loadReports() {
+        try {
+            const period = document.getElementById('repPeriod').value;
+            const mgrFilter = document.getElementById('repMgr').value;
+            const start = periodStart(period);
+
+            const { data: orders } = await db.from('orders').select('*');
+            const { data: expenses } = await db.from('expenses').select('*');
+
+            let fOrders = (orders || []).filter(o => new Date(o.created_at) >= start);
+            let fExpenses = (expenses || []).filter(e => new Date(e.expense_date || e.created_at) >= start);
+
+            if (mgrFilter !== 'all') {
+                fOrders = fOrders.filter(o => o.admin_accepted === mgrFilter);
+                fExpenses = fExpenses.filter(e => e.manager_name === mgrFilter);
+            }
+
+            const income = fOrders.reduce((s,o) => s + (o.paid_amount||0), 0);
+            const debt = fOrders.reduce((s,o) => s + (o.remaining_balance||0), 0);
+            const business = fExpenses.filter(e => (e.category||'business')==='business').reduce((s,e)=>s+(e.amount||0),0);
+            const personal = fExpenses.filter(e => e.category==='personal').reduce((s,e)=>s+(e.amount||0),0);
+            const profit = income - business - personal;
+
+            const t = T[lang];
+            document.getElementById('repStats').innerHTML = `
+                <div class="stat"><div class="stat-label">${t.repIncome}</div><div class="stat-value" style="color:#15803d">${money(income)}</div></div>
+                <div class="stat"><div class="stat-label">${t.repBusiness}</div><div class="stat-value">${money(business)}</div></div>
+                <div class="stat"><div class="stat-label">${t.repPersonal}</div><div class="stat-value">${money(personal)}</div></div>
+                <div class="stat"><div class="stat-label">${t.repProfit}</div><div class="stat-value" style="color:${profit<0?'#b91c1c':'#1a1a1a'}">${money(profit)}</div></div>
+                <div class="stat"><div class="stat-label">${t.repDebt}</div><div class="stat-value" style="color:#b91c1c">${money(debt)}</div></div>
+            `;
+
+            const typeNames = {
+                kz: {paint:'Бояу',mdf:'MDF',sand:'Құм қағазы',thin:'Ерітіндісі',pvc:'PVC',glue:'Желім',salary:'Жалақы',car:'Көлік',home:'Үй',other:'Басқа'},
+                ru: {paint:'Краска',mdf:'MDF',sand:'Наждачка',thin:'Растворитель',pvc:'PVC',glue:'Клей',salary:'Зарплата',car:'Машина',home:'Дом',other:'Прочее'}
+            };
+            const breakdown = {};
+            fExpenses.forEach(e => {
+                const key = e.expense_type;
+                breakdown[key] = (breakdown[key]||0) + (e.amount||0);
+            });
+
+            const bBody = document.getElementById('repBreakdownBody');
+            const entries = Object.entries(breakdown).sort((a,b)=>b[1]-a[1]);
+            if (entries.length) {
+                bBody.innerHTML = entries.map(([k,v]) =>
+                    `<tr><td>${typeNames[lang][k]||k}</td><td>${money(v)}</td></tr>`).join('');
+            } else {
+                bBody.innerHTML = `<tr><td colspan="2" class="empty">—</td></tr>`;
+            }
+
+            reportCache = { period, mgrFilter, income, business, personal, profit, debt, breakdown, typeNames, ordersCount: fOrders.length };
+        } catch (e) { console.error(e); }
+    }
+
+    async function exportReportPDF() {
+        if (!reportCache) { alert(lang==='ru'?'Нет данных':'Деректер жоқ'); return; }
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const useRoboto = await ensurePdfFont(doc);
+        const fontName = useRoboto ? 'Roboto' : 'helvetica';
+        const t = T[lang];
+        const r = reportCache;
+        const periodLabel = {week: t.repWeek, month: t.repMonth, all: t.repAll}[r.period];
+        const title = (lang==='ru'?'Отчёт':'Есеп') + ' — ' + periodLabel + (r.mgrFilter!=='all' ? ' / '+r.mgrFilter : '');
+
+        doc.setFontSize(14);
+        doc.text(title, 14, 18);
+        doc.setFontSize(9);
+        doc.text(new Date().toLocaleDateString('ru-RU'), 14, 25);
+
+        doc.autoTable({
+            startY: 32,
+            head: [[lang==='ru'?'Показатель':'Көрсеткіш', lang==='ru'?'Сумма':'Сома']],
+            body: [
+                [t.repIncome, money(r.income)],
+                [t.repBusiness, money(r.business)],
+                [t.repPersonal, money(r.personal)],
+                [t.repProfit, money(r.profit)],
+                [t.repDebt, money(r.debt)]
+            ],
+            styles: { fontSize: 10, font: fontName },
+            headStyles: { fillColor: [26,26,26], font: fontName }
+        });
+
+        const breakdownRows = Object.entries(r.breakdown).sort((a,b)=>b[1]-a[1])
+            .map(([k,v]) => [r.typeNames[lang][k]||k, money(v)]);
+        if (breakdownRows.length) {
+            doc.autoTable({
+                startY: doc.lastAutoTable.finalY + 10,
+                head: [[t.repBreakdownTitle, '']],
+                body: breakdownRows,
+                styles: { fontSize: 9, font: fontName },
+                headStyles: { fillColor: [74,74,74], font: fontName }
+            });
+        }
+
+        doc.save(`esep_${r.period}_${r.mgrFilter}_${new Date().toISOString().slice(0,10)}.pdf`);
     }
 
     async function loadExpenses() {
