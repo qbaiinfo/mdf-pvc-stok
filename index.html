@@ -1462,16 +1462,18 @@
         try {
             const newDebt = payCustomer.total_debt - amount;
 
-            // 1. Müşteri borcunu güncelle
-            await db.from('customers').update({ total_debt: newDebt }).eq('phone', payCustomer.phone);
-
-            // 2. Tahsilatı kaydet (hangi menajer aldı)
-            await db.from('payments').insert([{
+            // 1. Tahsilatı kaydet (hangi menajer aldı) - ÖNCE bunu yap, hata varsa görünsün
+            const { error: payErr } = await db.from('payments').insert([{
                 customer_phone: payCustomer.phone,
                 collected_by: collector,
                 amount: amount,
                 payment_type: newDebt <= 0 ? 'full' : 'partial'
             }]);
+            if (payErr) throw payErr;
+
+            // 2. Müşteri borcunu güncelle
+            const { error: custErr } = await db.from('customers').update({ total_debt: newDebt }).eq('phone', payCustomer.phone);
+            if (custErr) throw custErr;
 
             // 3. Bu müşterinin açık siparişlerine ödemeyi dağıt (en eski borçtan başla)
             const { data: openOrders } = await db.from('orders')
@@ -1496,6 +1498,7 @@
             document.getElementById('payOverlay').classList.remove('show');
             loadCustomers();
             loadDashboard();
+            loadCashbox();
         } catch (e) {
             alert((lang==='ru'?'Ошибка: ':'Қате: ') + e.message);
         } finally {
