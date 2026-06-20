@@ -643,7 +643,6 @@
         <button class="nav-item" onclick="showTab('cashbox', this)" id="navCash">Касса</button>
         <button class="nav-item" onclick="showTab('neworder', this)" id="navNew">Жаңа тапсырыс</button>
         <button class="nav-item" onclick="showTab('orders', this)" id="navOrders">Тапсырыстар</button>
-        <button class="nav-item" onclick="showTab('quotes', this)" id="navQuotes">Бағалар</button>
         <button class="nav-item" onclick="showTab('customers', this)" id="navCustomers">Берешеклі</button>
         <button class="nav-item" onclick="showTab('archive', this)" id="navArchive">Архив</button>
         <button class="nav-item" onclick="showTab('expenses', this)" id="navExpenses">Шығындар</button>
@@ -797,11 +796,6 @@
                 </div>
             </div>
 
-            <label style="display:flex; align-items:center; gap:10px; margin:8px 0 24px; cursor:pointer; font-size:14px;">
-                <input type="checkbox" id="isQuote" style="width:18px; height:18px; cursor:pointer;">
-                <span id="lblIsQuote">Тек есеп (тапсырыс емес)</span>
-            </label>
-
             <button class="btn-save" onclick="saveOrder()" id="btnSaveOrder">Сақтау</button>
         </div>
 
@@ -820,33 +814,11 @@
                             <th id="o5">Төленді</th>
                             <th id="o6">Берешек</th>
                             <th id="o7">Менеджер</th>
+                            <th id="o8"></th>
                         </tr>
                     </thead>
                     <tbody id="ordersBody">
-                        <tr><td colspan="7" class="empty" id="empty2">Тапсырыс жоқ</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- QUOTES (Teklifler) -->
-        <div id="quotes" class="section">
-            <h1 class="page-title" id="quotesTitle">Бағалар</h1>
-            <div class="page-eyebrow" id="quotesEyebrow">Бекітілмеген есептер</div>
-            <div class="table-wrap">
-                <table>
-                    <thead>
-                        <tr>
-                            <th id="q1">Клиент</th>
-                            <th id="q2">Түрі</th>
-                            <th id="q3">Күні</th>
-                            <th id="q4">Баға</th>
-                            <th id="q5">Менеджер</th>
-                            <th id="q6"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="quotesBody">
-                        <tr><td colspan="6" class="empty" id="emptyQuotes">Есеп жоқ</td></tr>
+                        <tr><td colspan="8" class="empty" id="empty2">Тапсырыс жоқ</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -893,21 +865,22 @@
         <!-- ARCHIVE -->
         <div id="archive" class="section">
             <h1 class="page-title" id="archTitle">Архив</h1>
-            <div class="page-eyebrow" id="archEyebrow">Аяқталған клиенттер</div>
+            <div class="page-eyebrow" id="archEyebrow">Архивтелген тапсырыстар</div>
 
             <div class="table-wrap">
                 <table>
                     <thead>
                         <tr>
-                            <th id="a1">Аты-жөні</th>
-                            <th id="a2">Телефон</th>
-                            <th id="a2b">Менеджер</th>
-                            <th id="a3">Барлық тапсырыс</th>
-                            <th id="a4"></th>
+                            <th id="a1">Клиент</th>
+                            <th id="a2">Түрі</th>
+                            <th id="a3">Күні</th>
+                            <th id="a4">Баға</th>
+                            <th id="a5">Менеджер</th>
+                            <th id="a6"></th>
                         </tr>
                     </thead>
                     <tbody id="archBody">
-                        <tr><td colspan="5" class="empty" id="emptyArch">Архивте жоқ</td></tr>
+                        <tr><td colspan="6" class="empty" id="emptyArch">Архивте жоқ</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -1121,7 +1094,7 @@
             quotesTitle:'Расчёты', quotesEyebrow:'Неподтверждённые расчёты', q1:'Клиент', q2:'Тип', q3:'Дата', q4:'Цена', q5:'Менеджер', emptyQuotes:'Нет расчётов', lblIsQuote:'Только расчёт (не заказ)',
             o1:'Клиент', o2:'Тип', o3:'Дата', o4:'Итого', o5:'Оплачено', o6:'Долг', o7:'Менеджер', empty2:'Нет заказов',
             custTitle:'Должники', custEyebrow:'Клиенты с долгом', c1:'ФИО', c2:'Телефон', c2b:'Менеджер', c3:'Долг', empty3:'Нет должников',
-            archTitle:'Архив', archEyebrow:'Завершённые клиенты', a1:'ФИО', a2:'Телефон', a2b:'Менеджер', a3:'Всего заказов', emptyArch:'Архив пуст',
+            archTitle:'Архив', archEyebrow:'Архивные заказы', a1:'Клиент', a2:'Тип', a3:'Дата', a4:'Цена', a5:'Менеджер', emptyArch:'Архив пуст',
             lblFilterMgr:'Менеджер', filterAll:'Все',
             repTitle:'Отчёты', repEyebrow:'Отчёт за период', lblRepPeriod:'Период', lblRepMgr:'Менеджер',
             repWeek:'Неделя', repMonth:'Месяц', repAll:'Всё', repMgrAll:'Все',
@@ -1156,7 +1129,7 @@
             quotesTitle:'Бағалар', quotesEyebrow:'Бекітілмеген есептер', q1:'Клиент', q2:'Түрі', q3:'Күні', q4:'Баға', q5:'Менеджер', emptyQuotes:'Есеп жоқ', lblIsQuote:'Тек есеп (тапсырыс емес)',
             o1:'Клиент', o2:'Түрі', o3:'Күні', o4:'Барлығы', o5:'Төленді', o6:'Берешек', o7:'Менеджер', empty2:'Тапсырыс жоқ',
             custTitle:'Берешеклі', custEyebrow:'Қарызы бар клиенттер', c1:'Аты-жөні', c2:'Телефон', c2b:'Менеджер', c3:'Берешек', empty3:'Берешек жоқ',
-            archTitle:'Архив', archEyebrow:'Аяқталған клиенттер', a1:'Аты-жөні', a2:'Телефон', a2b:'Менеджер', a3:'Барлық тапсырыс', emptyArch:'Архивте жоқ',
+            archTitle:'Архив', archEyebrow:'Архивтелген тапсырыстар', a1:'Клиент', a2:'Түрі', a3:'Күні', a4:'Баға', a5:'Менеджер', emptyArch:'Архивте жоқ',
             lblFilterMgr:'Менеджер', filterAll:'Барлығы',
             repTitle:'Есептер', repEyebrow:'Кезеңдік есеп', lblRepPeriod:'Кезең', lblRepMgr:'Менеджер',
             repWeek:'Апта', repMonth:'Ай', repAll:'Барлығы', repMgrAll:'Барлығы',
@@ -1233,7 +1206,6 @@
         if (name === 'dashboard') loadDashboard();
         if (name === 'cashbox') loadCashbox();
         if (name === 'orders') loadOrders();
-        if (name === 'quotes') loadQuotes();
         if (name === 'customers') loadCustomers();
         if (name === 'archive') loadArchive();
         if (name === 'expenses') loadExpenses();
@@ -1281,7 +1253,6 @@
 
         const btn = document.getElementById('btnSaveOrder');
         btn.disabled = true;
-        const isQuote = document.getElementById('isQuote').checked;
         const debt = price - paid;
         const fullName = (fname + ' ' + lname).trim();
 
@@ -1291,12 +1262,11 @@
             order_type: type === 'mdf' ? 'mdf_boya' : 'pvc_kaplama',
             admin_accepted: manager,
             total_price: price,
-            paid_amount: isQuote ? 0 : paid,
-            initial_paid: isQuote ? 0 : paid,
-            remaining_balance: isQuote ? price : debt,
+            paid_amount: paid,
+            initial_paid: paid,
+            remaining_balance: debt,
             payment_method: document.getElementById('payment').value,
-            status: isQuote ? 'quote' : 'pending',
-            is_quote: isQuote
+            status: 'pending'
         };
 
         if (type === 'mdf') {
@@ -1313,30 +1283,26 @@
             const { error: orderErr } = await db.from('orders').insert([order]);
             if (orderErr) throw orderErr;
 
-            // Teklif DEĞİLSE müşteri borcunu güncelle. Teklifse hiçbir işleme alma.
-            if (!isQuote) {
-                const { data: cust } = await db.from('customers').select('*').eq('phone', phone).maybeSingle();
-                if (cust) {
-                    await db.from('customers').update({
-                        total_debt: (cust.total_debt || 0) + debt,
-                        first_name: fname,
-                        last_name: lname
-                    }).eq('phone', phone);
-                } else {
-                    await db.from('customers').insert([{
-                        phone: phone,
-                        first_name: fname,
-                        last_name: lname,
-                        total_debt: debt
-                    }]);
-                }
+            const { data: cust } = await db.from('customers').select('*').eq('phone', phone).maybeSingle();
+            if (cust) {
+                await db.from('customers').update({
+                    total_debt: (cust.total_debt || 0) + debt,
+                    first_name: fname,
+                    last_name: lname
+                }).eq('phone', phone);
+            } else {
+                await db.from('customers').insert([{
+                    phone: phone,
+                    first_name: fname,
+                    last_name: lname,
+                    total_debt: debt
+                }]);
             }
 
-            alert(isQuote ? (lang==='ru'?'Расчёт сохранён':'Есеп сақталды') : (lang==='ru'?'Заказ сохранён':'Тапсырыс сақталды'));
+            alert(lang==='ru'?'Заказ сохранён':'Тапсырыс сақталды');
             ['firstName','lastName','price','paid','remaining','mdfSqm','mdfThick','color','pvcSqm','pvcThick','quantity'].forEach(id => {
                 document.getElementById(id).value = '';
             });
-            document.getElementById('isQuote').checked = false;
             document.getElementById('custPhone').value = '+7 ';
             document.getElementById('orderType').value = '';
             switchType();
@@ -1388,21 +1354,14 @@
         typeSelect.innerHTML = list.map(v => `<option value="${v}">${labels[lang][v]}</option>`).join('');
     }
 
-    // Arşivlenmiş müşterilerin telefonlarını getir (siparişlerini gizlemek için)
-    async function getArchivedPhones() {
-        const { data } = await db.from('customers').select('phone').eq('archived', true);
-        return new Set((data || []).map(c => c.phone));
-    }
-
     async function loadDashboard() {
         try {
-            const archivedPhones = await getArchivedPhones();
             const { data: allOrders } = await db.from('orders').select('*').order('created_at', { ascending: false });
-            const orders = (allOrders || []).filter(o => !archivedPhones.has(o.customer_phone) && !o.is_quote);
+            const orders = (allOrders || []).filter(o => !o.archived);
             const { data: customers } = await db.from('customers').select('total_debt');
             const { data: expenses } = await db.from('expenses').select('amount');
 
-            const totalDebt = (customers || []).reduce((s, c) => s + (c.total_debt || 0), 0);
+            const totalDebt = orders.reduce((s, o) => s + (o.remaining_balance || 0), 0);
             const totalExp = (expenses || []).reduce((s, e) => s + (e.amount || 0), 0);
 
             document.getElementById('valOrders').textContent = orders.length;
@@ -1431,9 +1390,8 @@
 
     async function loadOrders() {
         try {
-            const archivedPhones = await getArchivedPhones();
             const { data: allOrders } = await db.from('orders').select('*').order('created_at', { ascending: false });
-            ordersCache = (allOrders || []).filter(o => !archivedPhones.has(o.customer_phone) && !o.is_quote);
+            ordersCache = (allOrders || []).filter(o => !o.archived);
             const tbody = document.getElementById('ordersBody');
             if (ordersCache.length) {
                 tbody.innerHTML = ordersCache.map(o => `
@@ -1445,76 +1403,42 @@
                         <td>${money(o.paid_amount)}</td>
                         <td>${o.remaining_balance > 0 ? '<span class="badge debt">'+money(o.remaining_balance)+'</span>' : '<span class="badge paid">✓</span>'}</td>
                         <td>${o.admin_accepted}</td>
+                        <td style="text-align:right;"><button class="top-btn" onclick="event.stopPropagation(); archiveOrder('${o.id}')">${lang==='ru'?'В архив':'Архивтеу'}</button></td>
                     </tr>`).join('');
             } else {
-                tbody.innerHTML = `<tr><td colspan="7" class="empty">${T[lang].empty2}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" class="empty">${T[lang].empty2}</td></tr>`;
             }
         } catch (e) { console.error(e); }
     }
 
-    let quotesCache = [];
-
-    async function loadQuotes() {
-        try {
-            const { data: quotes } = await db.from('orders').select('*').eq('is_quote', true).order('created_at', { ascending: false });
-            quotesCache = quotes || [];
-            const tbody = document.getElementById('quotesBody');
-            if (quotesCache.length) {
-                tbody.innerHTML = quotesCache.map(o => `
-                    <tr class="clickable" onclick="showDetail('${o.id}')">
-                        <td>${o.customer_name || o.customer_phone}</td>
-                        <td>${o.order_type === 'mdf_boya' ? 'MDF' : 'PVC'}</td>
-                        <td>${new Date(o.created_at).toLocaleDateString('ru-RU')}</td>
-                        <td>${money(o.total_price)}</td>
-                        <td>${o.admin_accepted}</td>
-                        <td style="text-align:right;"><button class="top-btn" onclick="event.stopPropagation(); convertToOrder('${o.id}')">${lang==='ru'?'В заказ':'Тапсырысқа'}</button></td>
-                    </tr>`).join('');
-            } else {
-                tbody.innerHTML = `<tr><td colspan="6" class="empty">${T[lang].emptyQuotes || 'Есеп жоқ'}</td></tr>`;
-            }
-        } catch (e) { console.error(e); }
-    }
-
-    async function convertToOrder(orderId) {
-        const o = quotesCache.find(x => x.id === orderId);
+    async function archiveOrder(orderId) {
+        const o = ordersCache.find(x => x.id === orderId);
         if (!o) return;
-        if (!confirm(lang==='ru'?'Превратить расчёт в заказ?':'Есепті тапсырысқа айналдыру?')) return;
+        if (!confirm(lang==='ru'?'Отправить заказ в архив? Долг будет списан.':'Тапсырысты архивке жіберу? Берешек есептен шығады.')) return;
         try {
-            // Teklifi gerçek siparişe çevir: işleme al
-            await db.from('orders').update({
-                is_quote: false,
-                status: 'pending',
-                remaining_balance: o.total_price,
-                paid_amount: 0,
-                initial_paid: 0
-            }).eq('id', orderId);
+            // Siparişi arşivle
+            await db.from('orders').update({ archived: true }).eq('id', orderId);
 
-            // Müşteri borcunu ekle
-            const { data: cust } = await db.from('customers').select('*').eq('phone', o.customer_phone).maybeSingle();
-            if (cust) {
-                await db.from('customers').update({
-                    total_debt: (cust.total_debt || 0) + o.total_price
-                }).eq('phone', o.customer_phone);
-            } else {
-                const parts = (o.customer_name || '').split(' ');
-                await db.from('customers').insert([{
-                    phone: o.customer_phone,
-                    first_name: parts[0] || '',
-                    last_name: parts.slice(1).join(' ') || '',
-                    total_debt: o.total_price
-                }]);
+            // Bu siparişin kalan borcunu müşteri borcundan düş
+            if (o.remaining_balance > 0) {
+                const { data: cust } = await db.from('customers').select('*').eq('phone', o.customer_phone).maybeSingle();
+                if (cust) {
+                    const newDebt = Math.max(0, (cust.total_debt || 0) - o.remaining_balance);
+                    await db.from('customers').update({ total_debt: newDebt }).eq('phone', o.customer_phone);
+                }
             }
 
-            alert(lang==='ru'?'Создан заказ':'Тапсырыс құрылды');
-            loadQuotes();
+            loadOrders();
             loadDashboard();
         } catch (e) {
             alert((lang==='ru'?'Ошибка: ':'Қате: ') + e.message);
         }
     }
 
+    let archivedOrdersCache = [];
+
     function showDetail(orderId) {
-        const o = (ordersCache.find(x => x.id === orderId)) || (quotesCache.find(x => x.id === orderId));
+        const o = (ordersCache.find(x => x.id === orderId)) || (archivedOrdersCache.find(x => x.id === orderId));
         if (!o) return;
         const isRu = lang === 'ru';
         const payNames = {
@@ -1669,7 +1593,7 @@
 
     async function loadCustomers() {
         try {
-            const { data: customers } = await db.from('customers').select('*').or('archived.is.null,archived.eq.false').order('total_debt', { ascending: false });
+            const { data: customers } = await db.from('customers').select('*').gt('total_debt', 0).order('total_debt', { ascending: false });
             const { data: orders } = await db.from('orders').select('customer_phone, admin_accepted, remaining_balance');
 
             const phoneMgr = {};
@@ -1691,14 +1615,7 @@
             if (list.length) {
                 tbody.innerHTML = list.map(c => {
                     const name = ((c.first_name || '') + ' ' + (c.last_name || '')).trim() || '—';
-                    const debt = c.total_debt || 0;
-                    if (debt > 0) {
-                        // Borçlu: tıklayınca ödeme modalı
-                        return `<tr class="clickable" onclick="showPayModal('${c.phone}')"><td>${name}</td><td>${c.phone}</td><td>${c.manager}</td><td><span class="badge debt">${money(debt)}</span></td><td></td></tr>`;
-                    } else {
-                        // Borcu bitti: arşivle butonu
-                        return `<tr><td>${name}</td><td>${c.phone}</td><td>${c.manager}</td><td><span class="badge paid">✓ ${lang==='ru'?'Оплачено':'Төленді'}</span></td><td style="text-align:right;"><button class="top-btn" onclick="archiveCustomer('${c.phone}')">${lang==='ru'?'В архив':'Архивтеу'}</button></td></tr>`;
-                    }
+                    return `<tr class="clickable" onclick="showPayModal('${c.phone}')"><td>${name}</td><td>${c.phone}</td><td>${c.manager}</td><td><span class="badge debt">${money(c.total_debt)}</span></td><td></td></tr>`;
                 }).join('');
             } else {
                 tbody.innerHTML = `<tr><td colspan="5" class="empty">${T[lang].empty3}</td></tr>`;
@@ -1706,44 +1623,44 @@
         } catch (e) { console.error(e); }
     }
 
-    async function archiveCustomer(phone) {
-        if (!confirm(lang==='ru'?'Отправить клиента в архив?':'Клиентті архивке жіберу?')) return;
-        try {
-            await db.from('customers').update({ archived: true }).eq('phone', phone);
-            loadCustomers();
-            loadDashboard();
-        } catch (e) {
-            alert((lang==='ru'?'Ошибка: ':'Қате: ') + e.message);
-        }
-    }
-
     async function loadArchive() {
         try {
-            const { data: customers } = await db.from('customers').select('*').eq('archived', true).order('updated_at', { ascending: false });
-            const { data: orders } = await db.from('orders').select('customer_phone, admin_accepted, total_price');
-
-            const phoneMgr = {};
-            const phoneTotal = {};
-            (orders || []).forEach(o => {
-                phoneMgr[o.customer_phone] = o.admin_accepted;
-                phoneTotal[o.customer_phone] = (phoneTotal[o.customer_phone] || 0) + (o.total_price || 0);
-            });
-
+            const { data: orders } = await db.from('orders').select('*').eq('archived', true).order('created_at', { ascending: false });
+            archivedOrdersCache = orders || [];
             const tbody = document.getElementById('archBody');
-            if ((customers || []).length) {
-                tbody.innerHTML = customers.map(c => {
-                    const name = ((c.first_name || '') + ' ' + (c.last_name || '')).trim() || '—';
-                    return `<tr><td>${name}</td><td>${c.phone}</td><td>${phoneMgr[c.phone] || '—'}</td><td>${money(phoneTotal[c.phone] || 0)}</td><td style="text-align:right;"><button class="top-btn" onclick="unarchiveCustomer('${c.phone}')">${lang==='ru'?'Вернуть':'Қайтару'}</button></td></tr>`;
-                }).join('');
+            if (archivedOrdersCache.length) {
+                tbody.innerHTML = archivedOrdersCache.map(o => `
+                    <tr class="clickable" onclick="showDetail('${o.id}')">
+                        <td>${o.customer_name || o.customer_phone}</td>
+                        <td>${o.order_type === 'mdf_boya' ? 'MDF' : 'PVC'}</td>
+                        <td>${new Date(o.created_at).toLocaleDateString('ru-RU')}</td>
+                        <td>${money(o.total_price)}</td>
+                        <td>${o.admin_accepted}</td>
+                        <td style="text-align:right;"><button class="top-btn" onclick="event.stopPropagation(); unarchiveOrder('${o.id}')">${lang==='ru'?'Вернуть':'Қайтару'}</button></td>
+                    </tr>`).join('');
             } else {
-                tbody.innerHTML = `<tr><td colspan="5" class="empty">${T[lang].emptyArch || 'Архивте жоқ'}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="empty">${T[lang].emptyArch || 'Архивте жоқ'}</td></tr>`;
             }
         } catch (e) { console.error(e); }
     }
 
-    async function unarchiveCustomer(phone) {
+    async function unarchiveOrder(orderId) {
+        const o = archivedOrdersCache.find(x => x.id === orderId);
+        if (!o) return;
         try {
-            await db.from('customers').update({ archived: false }).eq('phone', phone);
+            // Siparişi arşivden çıkar
+            await db.from('orders').update({ archived: false }).eq('id', orderId);
+
+            // Kalan borcu müşteriye geri ekle
+            if (o.remaining_balance > 0) {
+                const { data: cust } = await db.from('customers').select('*').eq('phone', o.customer_phone).maybeSingle();
+                if (cust) {
+                    await db.from('customers').update({
+                        total_debt: (cust.total_debt || 0) + o.remaining_balance
+                    }).eq('phone', o.customer_phone);
+                }
+            }
+
             loadArchive();
             loadDashboard();
         } catch (e) {
@@ -1801,7 +1718,8 @@
 
     async function loadCashbox() {
         try {
-            const { data: orders } = await db.from('orders').select('admin_accepted, initial_paid');
+            const { data: allOrders } = await db.from('orders').select('admin_accepted, initial_paid, archived');
+            const orders = (allOrders || []).filter(o => !o.archived);
             const { data: expenses } = await db.from('expenses').select('manager_name, amount, category');
             const { data: payments } = await db.from('payments').select('collected_by, amount');
 
