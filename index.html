@@ -1620,14 +1620,19 @@
 
                 const balance = income - business - personal;
                 const negClass = balance < 0 ? ' negative' : '';
+                const isRu = lang === 'ru';
 
                 return `
                     <div class="cash-card">
                         <div class="cash-name">${mgr}</div>
                         <div class="cash-balance${negClass}">${money(balance)}</div>
                         <div class="cash-row">
-                            <span class="cash-row-label">${t.cashIncome}</span>
-                            <span class="cash-row-value in">+${money(income)}</span>
+                            <span class="cash-row-label">${isRu?'Предоплаты заказов':'Тапсырыс алдын ала төлемі'}</span>
+                            <span class="cash-row-value in">+${money(initialIncome)}</span>
+                        </div>
+                        <div class="cash-row">
+                            <span class="cash-row-label">${isRu?'Принятые долги':'Қабылданған берешек'}</span>
+                            <span class="cash-row-value in">+${money(collectedIncome)}</span>
                         </div>
                         <div class="cash-row">
                             <span class="cash-row-label">${t.cashBusiness}</span>
