@@ -1501,7 +1501,7 @@
         if (!c) return;
         payCustomer = c;
         const isRu = lang === 'ru';
-        const name = ((c.first_name||'')+' '+(c.last_name||'')).trim() || '—';
+        const name = c.name || ((c.first_name||'')+' '+(c.last_name||'')).trim() || '—';
 
         document.getElementById('payInfo').innerHTML = `
             <div class="detail-row"><span class="detail-label">${isRu?'Клиент':'Клиент'}</span><span class="detail-value">${name}</span></div>
@@ -1593,29 +1593,49 @@
 
     async function loadCustomers() {
         try {
-            const { data: customers } = await db.from('customers').select('*').gt('total_debt', 0).order('total_debt', { ascending: false });
-            const { data: orders } = await db.from('orders').select('customer_phone, admin_accepted, remaining_balance');
+            // Borçları doğrudan açık (arşivlenmemiş) siparişlerden hesapla - en güvenilir yöntem
+            const { data: orders } = await db.from('orders').select('customer_phone, customer_name, admin_accepted, remaining_balance, archived');
+            const { data: customers } = await db.from('customers').select('*');
 
-            const phoneMgr = {};
+            const custInfo = {};
+            (customers || []).forEach(c => { custInfo[c.phone] = c; });
+
+            // Her telefon için: açık siparişlerin kalan borcu toplamı + son menajer
+            const debtByPhone = {};
+            const mgrByPhone = {};
+            const nameByPhone = {};
             (orders || []).forEach(o => {
-                if (o.remaining_balance > 0) phoneMgr[o.customer_phone] = o.admin_accepted;
+                if (o.archived) return; // arşivli siparişler borç sayılmaz
+                const bal = o.remaining_balance || 0;
+                if (bal > 0) {
+                    debtByPhone[o.customer_phone] = (debtByPhone[o.customer_phone] || 0) + bal;
+                    mgrByPhone[o.customer_phone] = o.admin_accepted;
+                    nameByPhone[o.customer_phone] = o.customer_name;
+                }
             });
-            (orders || []).forEach(o => { if (!phoneMgr[o.customer_phone]) phoneMgr[o.customer_phone] = o.admin_accepted; });
 
             const filter = document.getElementById('custFilterMgr').value;
-            let list = (customers || []).map(c => ({
-                ...c,
-                manager: phoneMgr[c.phone] || '—'
-            }));
+            let list = Object.keys(debtByPhone).map(phone => {
+                const c = custInfo[phone] || {};
+                const fullName = ((c.first_name || '') + ' ' + (c.last_name || '')).trim() || nameByPhone[phone] || '—';
+                return {
+                    phone: phone,
+                    name: fullName,
+                    first_name: c.first_name,
+                    last_name: c.last_name,
+                    manager: mgrByPhone[phone] || '—',
+                    total_debt: debtByPhone[phone]
+                };
+            });
 
+            list.sort((a, b) => b.total_debt - a.total_debt);
             if (filter !== 'all') list = list.filter(c => c.manager === filter);
             customersCache = list;
 
             const tbody = document.getElementById('custBody');
             if (list.length) {
                 tbody.innerHTML = list.map(c => {
-                    const name = ((c.first_name || '') + ' ' + (c.last_name || '')).trim() || '—';
-                    return `<tr class="clickable" onclick="showPayModal('${c.phone}')"><td>${name}</td><td>${c.phone}</td><td>${c.manager}</td><td><span class="badge debt">${money(c.total_debt)}</span></td><td></td></tr>`;
+                    return `<tr class="clickable" onclick="showPayModal('${c.phone}')"><td>${c.name}</td><td>${c.phone}</td><td>${c.manager}</td><td><span class="badge debt">${money(c.total_debt)}</span></td><td></td></tr>`;
                 }).join('');
             } else {
                 tbody.innerHTML = `<tr><td colspan="5" class="empty">${T[lang].empty3}</td></tr>`;
