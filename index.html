@@ -968,6 +968,34 @@
     </div>
 </div>
 
+<!-- PAYMENT MODAL -->
+<div id="payOverlay" class="overlay" onclick="closePay(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-head">
+            <span id="payModalTitle">Төлем қабылдау</span>
+            <button class="modal-close" onclick="closePayBtn()">✕</button>
+        </div>
+        <div class="modal-body">
+            <div id="payInfo"></div>
+            <div class="field" style="margin-top:24px;">
+                <label id="payLblCollector">Кім қабылдады</label>
+                <select id="payCollector">
+                    <option value="Tilek">Tilek</option>
+                    <option value="Mirza">Mirza</option>
+                </select>
+            </div>
+            <div class="field">
+                <label id="payLblAmount">Төлем сомасы (₸)</label>
+                <input type="number" id="payAmount" step="100">
+            </div>
+            <div style="display:flex; gap:10px; margin-top:16px;">
+                <button class="btn-export" onclick="payFull()" id="payBtnFull" style="flex:1;">Толық төлеу</button>
+            </div>
+            <button class="btn-save" onclick="submitPayment()" id="payBtnSubmit" style="width:100%; margin-top:16px;">Қабылдау</button>
+        </div>
+    </div>
+</div>
+
 <script>
     const SUPABASE_URL = 'https://pegvsgxygqlstdaxlyas.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_Ri7s814pMGV9JyojJsSN3Q_7piklNPF';
@@ -1039,7 +1067,8 @@
             catBusiness:'Расход на работу', catPersonal:'Личный расход',
             et1:'Краска', et2:'MDF', et3:'Наждачка', et4:'Растворитель', et5:'PVC', et6:'Клей', et7:'Зарплата', et8:'Прочее',
             btnSaveExp:'Сохранить', expListTitle:'Список расходов',
-            e1:'Дата', e2:'Категория', e2b:'Тип', e3:'Сумма', e4:'Описание', e5:'Менеджер', empty4:'Нет расходов'
+            e1:'Дата', e2:'Категория', e2b:'Тип', e3:'Сумма', e4:'Описание', e5:'Менеджер', empty4:'Нет расходов',
+            payModalTitle:'Приём оплаты', payLblCollector:'Кто принял', payLblAmount:'Сумма оплаты (₸)', payBtnFull:'Оплатить полностью', payBtnSubmit:'Принять'
         },
         kz: {
             loginSub: 'Қойма басқару', lblManager: 'Менеджер', lblPassword: 'Құпия сөз',
@@ -1071,7 +1100,8 @@
             catBusiness:'Жұмыс шығыны', catPersonal:'Жеке шығын',
             et1:'Бояу', et2:'MDF', et3:'Құм қағазы', et4:'Ерітіндісі', et5:'PVC', et6:'Желім', et7:'Жалақы', et8:'Басқа',
             btnSaveExp:'Сақтау', expListTitle:'Шығындар тізімі',
-            e1:'Күні', e2:'Категория', e2b:'Түрі', e3:'Сома', e4:'Сипаттама', e5:'Менеджер', empty4:'Шығын жоқ'
+            e1:'Күні', e2:'Категория', e2b:'Түрі', e3:'Сома', e4:'Сипаттама', e5:'Менеджер', empty4:'Шығын жоқ',
+            payModalTitle:'Төлем қабылдау', payLblCollector:'Кім қабылдады', payLblAmount:'Төлем сомасы (₸)', payBtnFull:'Толық төлеу', payBtnSubmit:'Қабылдау'
         }
     };
 
@@ -1178,6 +1208,7 @@
             admin_accepted: manager,
             total_price: price,
             paid_amount: paid,
+            initial_paid: paid,
             remaining_balance: debt,
             payment_method: document.getElementById('payment').value,
             status: 'pending'
@@ -1379,6 +1410,99 @@
         document.getElementById('detailOverlay').classList.remove('show');
     }
 
+    // ===== ÖDEME ALMA =====
+    let payCustomer = null;
+
+    function showPayModal(phone) {
+        const c = customersCache.find(x => x.phone === phone);
+        if (!c) return;
+        payCustomer = c;
+        const isRu = lang === 'ru';
+        const name = ((c.first_name||'')+' '+(c.last_name||'')).trim() || '—';
+
+        document.getElementById('payInfo').innerHTML = `
+            <div class="detail-row"><span class="detail-label">${isRu?'Клиент':'Клиент'}</span><span class="detail-value">${name}</span></div>
+            <div class="detail-row"><span class="detail-label">${isRu?'Телефон':'Телефон'}</span><span class="detail-value">${c.phone}</span></div>
+            <div class="detail-row"><span class="detail-label">${isRu?'Текущий долг':'Ағымдағы берешек'}</span><span class="detail-value" style="color:#b91c1c">${money(c.total_debt)}</span></div>
+        `;
+        // Tahsilatı yapan menajer: o müşterinin siparişini kabul eden menajeri varsayılan seç
+        document.getElementById('payCollector').value = c.manager === 'Mirza' ? 'Mirza' : 'Tilek';
+        document.getElementById('payAmount').value = '';
+        document.getElementById('payOverlay').classList.add('show');
+    }
+
+    function payFull() {
+        if (payCustomer) document.getElementById('payAmount').value = payCustomer.total_debt;
+    }
+
+    function closePay(e) {
+        if (e.target.id === 'payOverlay') document.getElementById('payOverlay').classList.remove('show');
+    }
+
+    function closePayBtn() {
+        document.getElementById('payOverlay').classList.remove('show');
+    }
+
+    async function submitPayment() {
+        if (!payCustomer) return;
+        const amount = parseFloat(document.getElementById('payAmount').value);
+        const collector = document.getElementById('payCollector').value;
+
+        if (!amount || amount <= 0) {
+            alert(lang==='ru'?'Введите сумму':'Соманы енгізіңіз');
+            return;
+        }
+        if (amount > payCustomer.total_debt) {
+            alert(lang==='ru'?'Сумма больше долга':'Сома берешектен көп');
+            return;
+        }
+
+        const btn = document.getElementById('payBtnSubmit');
+        btn.disabled = true;
+        try {
+            const newDebt = payCustomer.total_debt - amount;
+
+            // 1. Müşteri borcunu güncelle
+            await db.from('customers').update({ total_debt: newDebt }).eq('phone', payCustomer.phone);
+
+            // 2. Tahsilatı kaydet (hangi menajer aldı)
+            await db.from('payments').insert([{
+                customer_phone: payCustomer.phone,
+                collected_by: collector,
+                amount: amount,
+                payment_type: newDebt <= 0 ? 'full' : 'partial'
+            }]);
+
+            // 3. Bu müşterinin açık siparişlerine ödemeyi dağıt (en eski borçtan başla)
+            const { data: openOrders } = await db.from('orders')
+                .select('*')
+                .eq('customer_phone', payCustomer.phone)
+                .gt('remaining_balance', 0)
+                .order('created_at', { ascending: true });
+
+            let remaining = amount;
+            for (const o of (openOrders || [])) {
+                if (remaining <= 0) break;
+                const pay = Math.min(remaining, o.remaining_balance);
+                await db.from('orders').update({
+                    paid_amount: (o.paid_amount || 0) + pay,
+                    remaining_balance: o.remaining_balance - pay,
+                    status: (o.remaining_balance - pay) <= 0 ? 'done' : o.status
+                }).eq('id', o.id);
+                remaining -= pay;
+            }
+
+            alert(lang==='ru'?'Платёж принят':'Төлем қабылданды');
+            document.getElementById('payOverlay').classList.remove('show');
+            loadCustomers();
+            loadDashboard();
+        } catch (e) {
+            alert((lang==='ru'?'Ошибка: ':'Қате: ') + e.message);
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
     let customersCache = [];
 
     async function loadCustomers() {
@@ -1405,7 +1529,7 @@
             if (list.length) {
                 tbody.innerHTML = list.map(c => {
                     const name = ((c.first_name || '') + ' ' + (c.last_name || '')).trim() || '—';
-                    return `<tr><td>${name}</td><td>${c.phone}</td><td>${c.manager}</td><td><span class="badge debt">${money(c.total_debt)}</span></td></tr>`;
+                    return `<tr class="clickable" onclick="showPayModal('${c.phone}')"><td>${name}</td><td>${c.phone}</td><td>${c.manager}</td><td><span class="badge debt">${money(c.total_debt)}</span></td></tr>`;
                 }).join('');
             } else {
                 tbody.innerHTML = `<tr><td colspan="4" class="empty">${T[lang].empty3}</td></tr>`;
@@ -1463,17 +1587,25 @@
 
     async function loadCashbox() {
         try {
-            const { data: orders } = await db.from('orders').select('admin_accepted, paid_amount');
+            const { data: orders } = await db.from('orders').select('admin_accepted, initial_paid');
             const { data: expenses } = await db.from('expenses').select('manager_name, amount, category');
+            const { data: payments } = await db.from('payments').select('collected_by, amount');
 
             const managers = ['Tilek', 'Mirza'];
             const grid = document.getElementById('cashboxGrid');
             const t = T[lang];
 
             grid.innerHTML = managers.map(mgr => {
-                const income = (orders || [])
+                // GELİR = sipariş peşinatları (sipariş sahibine) + sonradan tahsilatlar (tahsil edene)
+                const initialIncome = (orders || [])
                     .filter(o => o.admin_accepted === mgr)
-                    .reduce((s, o) => s + (o.paid_amount || 0), 0);
+                    .reduce((s, o) => s + (o.initial_paid || 0), 0);
+
+                const collectedIncome = (payments || [])
+                    .filter(p => p.collected_by === mgr)
+                    .reduce((s, p) => s + (p.amount || 0), 0);
+
+                const income = initialIncome + collectedIncome;
 
                 const business = (expenses || [])
                     .filter(e => e.manager_name === mgr && (e.category || 'business') === 'business')
