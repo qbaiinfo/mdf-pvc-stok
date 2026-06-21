@@ -1,30 +1,22 @@
-// MDF & PVC - Service Worker
-const CACHE = 'mdf-pvc-v1';
-const ASSETS = ['/', '/index.html', '/manifest.json'];
+// MDF & PVC - Service Worker v2
+const CACHE = 'mdf-pvc-v2';
 
-// Kurulum: temel dosyaları önbelleğe al
+// Kurulum: hemen aktif ol
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
   self.skipWaiting();
 });
 
-// Aktivasyon: eski önbellekleri temizle
+// Aktivasyon: TÜM eski önbellekleri temizle
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    )
+      Promise.all(keys.map(k => caches.delete(k)))
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-// İstekler: önce ağ, olmazsa önbellek (Supabase verileri hep canlı gelsin)
+// İstekler: HER ZAMAN ağdan al, böylece güncel sürüm hep gelir
 self.addEventListener('fetch', e => {
-  const url = e.request.url;
-  // Supabase ve CDN isteklerini cache'leme, hep ağdan al
-  if (url.includes('supabase.co') || url.includes('cdn.') || url.includes('cdnjs.')) {
-    return;
-  }
   e.respondWith(
     fetch(e.request).catch(() => caches.match(e.request))
   );

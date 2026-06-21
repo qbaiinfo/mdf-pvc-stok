@@ -2085,10 +2085,12 @@
     toggleExpTypes();
     restoreSession();
 
-    // PWA: Service Worker kaydı
+    // PWA: Service Worker - her zaman güncel sürümü al
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js').catch(e => console.log('SW kaydı başarısız', e));
+            navigator.serviceWorker.register('sw.js').then(reg => {
+                reg.update(); // her açılışta güncelle
+            }).catch(e => console.log('SW kaydı başarısız', e));
         });
     }
 </script>
