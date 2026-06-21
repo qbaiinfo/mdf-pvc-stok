@@ -606,7 +606,11 @@
         .report-cell-value.in { color: #15803d; }
         .report-cell-value.out { color: #b91c1c; }
 
-        @media (max-width: 900px) {
+        @media (min-width: 900px) {
+            .nav span { display: inline; }
+        }
+
+        @media (max-width: 899px) {
             .topbar, .main { padding-left: 20px; padding-right: 20px; }
             .main { padding-top: 40px; padding-bottom: 90px; }
             .login-card { padding: 40px 28px; }
@@ -646,12 +650,9 @@
                 border-top-color: var(--black) !important;
             }
 
-            /* Mobilde nav içindeki tüm span'ları gizle */
+            /* Mobilde span'ları gizle */
             .nav span { 
                 display: none !important; 
-                font-size: 0 !important;
-                width: 0 !important;
-                visibility: hidden !important;
             }
         }
     </style>
@@ -663,7 +664,7 @@
     <div class="login-card">
         <div class="login-logo">MDF &middot; PVC</div>
         <div class="login-sub" id="loginSub">Қойма басқару</div>
-        <div style="text-align:center; font-size:9px; color:#22c55e; letter-spacing:2px; margin-bottom:20px; font-weight:600;">● V5</div>
+        <div style="text-align:center; font-size:9px; color:#22c55e; letter-spacing:2px; margin-bottom:20px; font-weight:600;">● V6</div>
 
         <div class="field">
             <label id="lblManager">Менеджер</label>
