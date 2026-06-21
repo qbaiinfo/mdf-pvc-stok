@@ -624,35 +624,28 @@
                 border-top: 1px solid var(--gray-lighter);
                 border-bottom: none;
                 box-shadow: 0 -2px 12px rgba(0,0,0,0.06);
-                justify-content: flex-start;
-                -webkit-overflow-scrolling: touch;
+                justify-content: space-around;
+                overflow-x: visible;
             }
 
             .nav-item {
                 flex-direction: column;
-                gap: 4px;
-                padding: 10px 14px;
-                min-width: 64px;
-                font-size: 8px;
-                letter-spacing: 0.5px;
+                gap: 0;
+                padding: 14px 0;
+                flex: 1;
+                min-width: 0;
                 border-bottom: none;
                 border-top: 2px solid transparent;
             }
 
-            .nav-ico { width: 22px; height: 22px; }
+            .nav-ico { width: 24px; height: 24px; }
 
             .nav-item.active {
                 border-bottom-color: transparent;
                 border-top-color: var(--black);
             }
 
-            .nav-txt {
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                max-width: 60px;
-                text-align: center;
-            }
+            .nav-txt { display: none; }
         }
     </style>
 </head>
