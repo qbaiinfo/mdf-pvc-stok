@@ -607,7 +607,6 @@
         .report-cell-value.out { color: #b91c1c; }
 
         @media (min-width: 900px) {
-            .nav span { display: inline; }
         }
 
         @media (max-width: 899px) {
@@ -649,11 +648,6 @@
                 border-bottom-color: transparent !important;
                 border-top-color: var(--black) !important;
             }
-
-            /* Mobilde span'ları gizle */
-            .nav span { 
-                display: none !important; 
-            }
         }
     </style>
 </head>
@@ -664,7 +658,7 @@
     <div class="login-card">
         <div class="login-logo">MDF &middot; PVC</div>
         <div class="login-sub" id="loginSub">Қойма басқару</div>
-        <div style="text-align:center; font-size:9px; color:#22c55e; letter-spacing:2px; margin-bottom:20px; font-weight:600;">● V6</div>
+        <div style="text-align:center; font-size:9px; color:#22c55e; letter-spacing:2px; margin-bottom:20px; font-weight:600;">● V7 FINAL</div>
 
         <div class="field">
             <label id="lblManager">Менеджер</label>
@@ -698,39 +692,30 @@
     <div class="nav">
         <button class="nav-item active" onclick="showTab('dashboard', this)" id="navDash">
             <svg viewBox="0 0 24 24" class="nav-ico"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-            <span class="nav-txt">Панель</span>
         </button>
         <button class="nav-item" onclick="showTab('cashbox', this)" id="navCash">
             <svg viewBox="0 0 24 24" class="nav-ico"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
-            <span class="nav-txt">Касса</span>
         </button>
         <button class="nav-item" onclick="showTab('neworder', this)" id="navNew">
             <svg viewBox="0 0 24 24" class="nav-ico"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-            <span class="nav-txt">Жаңа тапсырыс</span>
         </button>
         <button class="nav-item" onclick="showTab('orders', this)" id="navOrders">
             <svg viewBox="0 0 24 24" class="nav-ico"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-            <span class="nav-txt">Тапсырыстар</span>
         </button>
         <button class="nav-item" onclick="showTab('quotes', this)" id="navQuotes">
             <svg viewBox="0 0 24 24" class="nav-ico"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            <span class="nav-txt">Бағалар</span>
         </button>
         <button class="nav-item" onclick="showTab('customers', this)" id="navCustomers">
             <svg viewBox="0 0 24 24" class="nav-ico"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-            <span class="nav-txt">Берешеклі</span>
         </button>
         <button class="nav-item" onclick="showTab('archive', this)" id="navArchive">
             <svg viewBox="0 0 24 24" class="nav-ico"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
-            <span class="nav-txt">Архив</span>
         </button>
         <button class="nav-item" onclick="showTab('expenses', this)" id="navExpenses">
             <svg viewBox="0 0 24 24" class="nav-ico"><line x1="12" y1="1" x2="12" y2="23"/><path d="M7 19H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-2"/></svg>
-            <span class="nav-txt">Шығындар</span>
         </button>
         <button class="nav-item" onclick="showTab('reports', this)" id="navReports">
             <svg viewBox="0 0 24 24" class="nav-ico"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-            <span class="nav-txt">Есептер</span>
         </button>
     </div>
 
