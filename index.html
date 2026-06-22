@@ -1393,7 +1393,6 @@
 
         const btn = document.getElementById('btnSaveOrder');
         btn.disabled = true;
-        const isQuote = false;
         const debt = price - paid;
         const fullName = (fname + ' ' + lname).trim();
 
@@ -1403,12 +1402,11 @@
             order_type: type === 'mdf' ? 'mdf_boya' : 'pvc_kaplama',
             admin_accepted: manager,
             total_price: price,
-            paid_amount: isQuote ? 0 : paid,
-            initial_paid: isQuote ? 0 : paid,
-            remaining_balance: isQuote ? price : debt,
+            paid_amount: paid,
+            initial_paid: paid,
+            remaining_balance: debt,
             payment_method: document.getElementById('payment').value,
-            status: isQuote ? 'quote' : 'pending',
-            is_quote: isQuote
+            status: 'pending'
         };
 
         if (type === 'mdf') {
@@ -1425,26 +1423,24 @@
             const { error: orderErr } = await db.from('orders').insert([order]);
             if (orderErr) throw orderErr;
 
-            // Teklif DEĞİLSE müşteri borcunu güncelle. Teklifse hiçbir işleme alma.
-            if (!isQuote) {
-                const { data: cust } = await db.from('customers').select('*').eq('phone', phone).maybeSingle();
-                if (cust) {
-                    await db.from('customers').update({
-                        total_debt: (cust.total_debt || 0) + debt,
-                        first_name: fname,
-                        last_name: lname
-                    }).eq('phone', phone);
-                } else {
-                    await db.from('customers').insert([{
-                        phone: phone,
-                        first_name: fname,
-                        last_name: lname,
-                        total_debt: debt
-                    }]);
-                }
+            // Müşteri borcunu güncelle
+            const { data: cust } = await db.from('customers').select('*').eq('phone', phone).maybeSingle();
+            if (cust) {
+                await db.from('customers').update({
+                    total_debt: (cust.total_debt || 0) + debt,
+                    first_name: fname,
+                    last_name: lname
+                }).eq('phone', phone);
+            } else {
+                await db.from('customers').insert([{
+                    phone: phone,
+                    first_name: fname,
+                    last_name: lname,
+                    total_debt: debt
+                }]);
             }
 
-            alert(isQuote ? (lang==='ru'?'Расчёт сохранён':'Есеп сақталды') : (lang==='ru'?'Заказ сохранён':'Тапсырыс сақталды'));
+            alert(lang==='ru'?'Заказ сохранён':'Тапсырыс сақталды');
             ['firstName','lastName','price','paid','remaining','mdfSqm','mdfThick','color','pvcSqm','pvcThick','quantity'].forEach(id => {
                 document.getElementById(id).value = '';
             });
